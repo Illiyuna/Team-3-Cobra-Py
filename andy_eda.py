@@ -62,14 +62,14 @@ display(dc_df.head().style.set_sticky(axis="index"))
 #Cat vars I am interested in
 categorical_variabless_list=[
     'derived_loan_product_type',
-    'derived_dwelling_category',
+    'derived_dwelling_category', #
     'derived_ethnicity',
     'derived_race',
     'derived_sex',
     'action_taken',
     'loan_purpose',
     'business_or_commercial_purpose',
-    'occupancy_type',
+    'occupancy_type', # construction_method
     'aus_1',
     'aus_2',
     'aus_3',
@@ -157,8 +157,29 @@ def clean_propval(val):
         new_val=float(int(new_val))
         return (new_val if new_val>=0 else np.nan) 
     except:
-        #Catch all for not situations not covered
+        #Catch all for situations not covered
         return np.nan
+
+##################################################
+
+def clean_int_rate(val):
+    
+    #remove any whitespace
+    new_val=val.strip()
+    
+    #Attempt to convert directly to float, returning NaN if negative
+    try:
+        new_val=float(val)
+        return (new_val if new_val>=0 else np.nan)
+    except:
+        pass
+    
+    #Convert interest rate to 0, if exempt
+    if val=='Exempt':
+        return 0
+    
+    #Catch all for situations not covered
+    return np.nan
 
 ##################################################
 
@@ -167,8 +188,9 @@ def clean_propval(val):
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
     
 #Subset for desired test data
-col_names=["property_value", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
-test_df=dc_df[col_names].copy()
+col_names1=["property_value", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
+col_names2=["property_value", "derived_dwelling_category", "occupancy_type", "construction_method", "total_units", "interest_rate", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
+test_df=dc_df[col_names2].copy()
 
 #Change property_value column to numerical
 test_df.iloc[:,0:1]=test_df.loc[:, 'property_value'].apply(clean_propval)
@@ -176,8 +198,12 @@ test_df.head()
 
 
 #%%
+
+#derived_dwelling_category + occupancy_type + construction_method + total_units + interest_rate
+
+
 #Build test linear model
-model_test=ols(formula='property_value ~ tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=test_df)
+model_test=ols(formula='property_value ~ C(derived_dwelling_category) + C(occupancy_type) + C(construction_method) + C(total_units) + interest_rate + tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=test_df)
 model_test_fit=model_test.fit()
 print(model_test_fit.summary())
 # %%
