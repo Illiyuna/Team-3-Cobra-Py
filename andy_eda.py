@@ -4,6 +4,7 @@
 ## Imports ##
 #############
 
+from cgi import test
 from operator import index
 import pandas as pd
 import numpy as np
@@ -154,7 +155,9 @@ def clean_propval(val):
         regex=r'^[0-9]+'
         new_val=re.findall(regex, val)[0]
         #Convert to integer then float and return if positive, Nan if less than 0
-        new_val=float(int(new_val))
+        #new_val=float(int(new_val))
+        new_val=int(new_val)
+        #print(f'{type(new_val)} {new_val}')
         return (new_val if new_val>=0 else np.nan) 
     except:
         #Catch all for situations not covered
@@ -185,7 +188,7 @@ def clean_int_rate(val):
 
 #%%
 
-pd.set_option('display.float_format', lambda x: '%.2f' % x)
+#pd.set_option('display.float_format', lambda x: '%.2f' % x)
     
 #Subset for desired test data
 col_names1=["property_value", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
@@ -193,9 +196,60 @@ col_names2=["property_value", "derived_dwelling_category", "occupancy_type", "co
 test_df=dc_df[col_names2].copy()
 
 #Change property_value column to numerical
-test_df.iloc[:,0:1]=test_df.loc[:, 'property_value'].apply(clean_propval)
+test_df.iloc[:,0:1]=test_df.loc[:, 'property_value'].apply(clean_propval)#.astype('Int64')
+#test_df.iloc[:,0:1]=test_df.iloc[:,0:1].astype('Int64')
 test_df.head()
 
+#%%
+#graphing
+#Supressing Log tick label
+#https://stackoverflow.com/questions/68468307/how-do-i-change-le6-to-1000000-in-matplotlib
+
+def make_scatter(data, x, y):
+    sns.regplot(data=data, x=x, y=y, scatter_kws={'alpha':0.03})
+    plt.ticklabel_format(style='plain')
+    plt.xticks(rotation=45)
+    plt.show()
+
+#Filter for extreme prop val
+test_df=test_df.dropna()
+cond=test_df['property_value']<=2000000
+filtered_popval=test_df[cond]
+
+#hist of prop val
+#g=sns.histplot(binrange=(0,2000000), binwidth=10000, data=test_df, x='property_value')
+#g.set_xticklabels(['', '0', '200,000', '400,000', '600,000', '800,000', '1,000,000'])
+g=sns.histplot(data=filtered_popval, binwidth=10000, x='property_value')
+g.ticklabel_format(style='plain')
+plt.xticks(rotation=45)
+plt.show()
+
+
+#%%
+#scatterplot: val against pop
+# g=sns.scatterplot(data=filtered_popval, x='tract_population', y='property_value')
+# g.ticklabel_format(style='plain')
+# plt.xticks(rotation=45)
+# plt.show()
+make_scatter(filtered_popval.iloc[:, np.r_[0, 6]], x='tract_population', y='property_value')
+make_scatter(filtered_popval, x='tract_minority_population_percent', y='property_value')
+make_scatter(filtered_popval, x='ffiec_msa_md_median_family_income', y='property_value')
+make_scatter(filtered_popval, x='tract_to_msa_income_percentage', y='property_value')
+make_scatter(filtered_popval, x='tract_owner_occupied_units', y='property_value')
+make_scatter(filtered_popval, x='tract_one_to_four_family_homes', y='property_value')
+make_scatter(filtered_popval, x='tract_median_age_of_housing_units', y='property_value')
+
+#%%
+#GRAPH TESTING FOR PROP VAL -- isna ERRORS -- was due to making int instead of float?
+
+#Get slice
+# col_names1=["property_value", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
+# test_slice=dc_df.loc[0:1000, col_names1].copy()
+# #Clean slice
+# test_slice['property_value']=test_slice['property_value'].apply(clean_propval)
+# #Regplot slice
+# sns.regplot(data=test_slice, x='tract_population', y='property_value')
+# plt.show()
 
 #%%
 
