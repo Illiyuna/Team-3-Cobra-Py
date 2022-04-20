@@ -14,7 +14,9 @@ import seaborn as sns
 import re
 
 from statsmodels.formula.api import ols
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
+#import os
 
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
@@ -42,6 +44,10 @@ color_list=['BuPu', 'PRGn', 'Pastel1', 'Pastel2', 'Set2', 'binary', 'bone', 'bwr
 #     g.map_dataframe(sns.histplot, x="income00")
 #     plt.show()
 
+#RGB values of pallette
+#print(sns.color_palette('Set2').as_hex())
+#col_pallette=['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3']
+
 #Graphs
 sns.set_palette('Set2')
 
@@ -49,104 +55,10 @@ sns.set_palette('Set2')
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 
 #%%
-#Load in dc_df
-dc_df=pd.read_csv("data/dc_df.csv")
-
-#%%
-# show number of obs and display df head
-print(f'Dc observations: {len(dc_df)}')
-display(dc_df.head().style.set_sticky(axis="index"))
-
-#%%
-#Get variables interested in
-
-#Cat vars I am interested in
-categorical_variabless_list=[
-    'derived_loan_product_type',
-    'derived_dwelling_category', #
-    'derived_ethnicity',
-    'derived_race',
-    'derived_sex',
-    'action_taken',
-    'loan_purpose',
-    'business_or_commercial_purpose',
-    'occupancy_type', # construction_method
-    'aus_1',
-    'aus_2',
-    'aus_3',
-    'aus_4',
-    'aus_5',
-    'denial_reason_1',
-    'denial_reason_2',
-    'denial_reason_3',
-    'denial_reason_4']
-
-continuous_variabless_list = [
-    'loan_amount',
-    'interest_rate',
-    'loan_term',
-    'property_value',
-    'income',
-    'debt_to_income_ratio',
-    'applicant_age',
-    'co_applicant_age',
-    'tract_population',
-    'tract_minority_population_percent',
-    'ffiec_msa_md_median_family_income',
-    'tract_to_msa_income_percentage',
-    'tract_owner_occupied_units',
-    'tract_one_to_four_family_homes',
-    'tract_median_age_of_housing_units']
-
-#%%
-#look at summary statistics
-
-
-#%%
 
 ###############
 ## Functions ##
 ###############
-
-def clean_propval_col(prop_val):
-
-    #Get the propety value for the given row
-    #prop_val = row['property_value']
-    
-    #Attempt to turn it into an integer
-    try: 
-        prop_val = int(prop_val)
-    except: 
-        pass
-
-    #Attempt to turn it into a float
-    try: 
-        if not isinstance(prop_val,int): 
-            prop_val = float(prop_val)
-    except: 
-        pass
-
-    #If numeric and not a boolean, return the value -- return Nan if value is less than 0 or is a boolean
-    if ( isinstance(prop_val,int) or isinstance(prop_val,float) ) and not isinstance(prop_val, bool):
-        return ( prop_val if prop_val>=0 else np.nan )
-    if isinstance(prop_val, bool):
-        return np.nan
-
-    #If dealing with a complex string, adjust for approriate numeric value
-
-    # #Get rid of any whitespace
-    # prop_val = prop_val.strip()
-    # #Assign values depending on string content
-    # if thechildren == "Dk na":
-    #     return np.nan
-    # if thechildren == "Eight or more": 
-    #     thechildren = min(8 + np.random.chisquare(2) , 12)
-    #     return thechildren # leave it as decimal
-    
-    #Catch All for not covered situations
-    return np.nan
-
-##################################################
 
 def clean_propval(val):
     
@@ -186,6 +98,41 @@ def clean_int_rate(val):
 
 ##################################################
 
+def make_scatter(data, x, y):
+    ax1=sns.regplot(data=data, x=x, y=y, color="#b3b3b3", scatter_kws={'alpha':0.03})
+    ax1.lines[0].set_color("#e5c494")
+    plt.ticklabel_format(style='plain')
+    plt.xticks(rotation=45)
+    plt.show()
+
+##################################################
+
+def make_hist_kde(data, x, bins):
+    #change line color 
+    #source: https://github.com/mwaskom/seaborn/issues/2344
+    
+    #Initialize graph
+    ax1=sns.histplot(data=data, x=x, bins=bins, color="#8da0cb",
+                     kde=True, line_kws=dict(linewidth=4))
+    #Change color of KDE line
+    ax1.lines[0].set_color("#e78ac3")
+    #Format and display
+    plt.ticklabel_format(style='plain')
+    plt.xticks(rotation=45)
+    plt.show()
+
+##################################################
+#<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
+
+#%%
+#Load in dc_df
+dc_df=pd.read_csv("data/dc_df.csv")
+
+#%%
+# show number of obs and display df head
+print(f'Dc observations: {len(dc_df)}')
+display(dc_df.head().style.set_sticky(axis="index"))
+
 #%%
 
 #pd.set_option('display.float_format', lambda x: '%.2f' % x)
@@ -197,67 +144,131 @@ test_df=dc_df[col_names2].copy()
 
 #Change property_value column to numerical
 test_df.iloc[:,0:1]=test_df.loc[:, 'property_value'].apply(clean_propval)#.astype('Int64')
-#test_df.iloc[:,0:1]=test_df.iloc[:,0:1].astype('Int64')
-test_df.head()
 
-#%%
-#graphing
-#Supressing Log tick label
-#https://stackoverflow.com/questions/68468307/how-do-i-change-le6-to-1000000-in-matplotlib
-
-def make_scatter(data, x, y):
-    sns.regplot(data=data, x=x, y=y, scatter_kws={'alpha':0.03})
-    plt.ticklabel_format(style='plain')
-    plt.xticks(rotation=45)
-    plt.show()
-
-#Filter for extreme prop val
-test_df=test_df.dropna()
-cond=test_df['property_value']<=2000000
+#Filter for houses below 1.25 mil
+cut_off=2000000
+cond=test_df['property_value']<=cut_off
 filtered_popval=test_df[cond]
 
-#hist of prop val
-#g=sns.histplot(binrange=(0,2000000), binwidth=10000, data=test_df, x='property_value')
-#g.set_xticklabels(['', '0', '200,000', '400,000', '600,000', '800,000', '1,000,000'])
-g=sns.histplot(data=filtered_popval, binwidth=10000, x='property_value')
-g.ticklabel_format(style='plain')
-plt.xticks(rotation=45)
+##################################################
+#<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
+
+#Summary Statistics
+display(filtered_popval.head().style.set_sticky(axis="index"))
+display(filtered_popval.describe().style.set_sticky(axis="index"))
+print()
+display(filtered_popval.derived_dwelling_category.value_counts())
+print()
+display(filtered_popval.occupancy_type.value_counts())
+print()
+display(filtered_popval.construction_method.value_counts())
+print()
+display(filtered_popval.total_units.value_counts())
+
+##################################################
+#<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
+
+#%%
+#Bar graphs
+
+#%%
+#Box plots
+
+#%%
+#hist plots of all variables examined in this question
+#binw=None
+strg=16
+rice=36
+bins=strg
+make_hist_kde(filtered_popval, x='property_value', bins=bins)
+make_hist_kde(filtered_popval, x='tract_population', bins=bins)
+make_hist_kde(filtered_popval, x='tract_minority_population_percent', bins=bins)
+make_hist_kde(filtered_popval, x='ffiec_msa_md_median_family_income', bins=bins)
+make_hist_kde(filtered_popval, x='tract_to_msa_income_percentage', bins=bins)
+make_hist_kde(filtered_popval, x='tract_owner_occupied_units', bins=bins)
+make_hist_kde(filtered_popval, x='tract_one_to_four_family_homes', bins=bins)
+make_hist_kde(filtered_popval, x='tract_median_age_of_housing_units', bins=bins)
+
+#%%
+
+# make_scatter(filtered_popval, x='tract_population', y='property_value')
+# make_scatter(filtered_popval, x='tract_minority_population_percent', y='property_value')
+# make_scatter(filtered_popval, x='ffiec_msa_md_median_family_income', y='property_value')
+# make_scatter(filtered_popval, x='tract_to_msa_income_percentage', y='property_value')
+# make_scatter(filtered_popval, x='tract_owner_occupied_units', y='property_value')
+# make_scatter(filtered_popval, x='tract_one_to_four_family_homes', y='property_value')
+# make_scatter(filtered_popval, x='tract_median_age_of_housing_units', y='property_value')
+
+#Pair Grid of Scatterplots
+x_vars1=["tract_population", "tract_minority_population_percent", "tract_to_msa_income_percentage"]
+x_vars2=["tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
+
+g1 = sns.PairGrid(filtered_popval, y_vars=["property_value"], x_vars=x_vars1, height=5)
+g1.map(sns.regplot, color="#b3b3b3", scatter_kws={'alpha':0.03}, line_kws={"color":"#e5c494"})
+plt.ticklabel_format(style='plain')
+g2 = sns.PairGrid(filtered_popval, y_vars=["property_value"], x_vars=x_vars2, height=5)
+g2.map(sns.regplot, color="#b3b3b3", scatter_kws={'alpha':0.03}, line_kws={"color":"#e5c494"})
+plt.ticklabel_format(style='plain')
 plt.show()
 
+##################################################
+#<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 
 #%%
-#scatterplot: val against pop
-# g=sns.scatterplot(data=filtered_popval, x='tract_population', y='property_value')
-# g.ticklabel_format(style='plain')
-# plt.xticks(rotation=45)
-# plt.show()
-make_scatter(filtered_popval.iloc[:, np.r_[0, 6]], x='tract_population', y='property_value')
-make_scatter(filtered_popval, x='tract_minority_population_percent', y='property_value')
-make_scatter(filtered_popval, x='ffiec_msa_md_median_family_income', y='property_value')
-make_scatter(filtered_popval, x='tract_to_msa_income_percentage', y='property_value')
-make_scatter(filtered_popval, x='tract_owner_occupied_units', y='property_value')
-make_scatter(filtered_popval, x='tract_one_to_four_family_homes', y='property_value')
-make_scatter(filtered_popval, x='tract_median_age_of_housing_units', y='property_value')
+#Check VIF
+#resource: https://www.geeksforgeeks.org/detecting-multicollinearity-with-vif-python/
+
+# the independent variables set
+vars1=[7,9]
+vars2=[7,9,10,11,12]
+
+vif_filter = filtered_popval.iloc[:, np.r_[vars2]]
+  
+# VIF dataframe
+vif_data = pd.DataFrame()
+vif_data["feature"] = vif_filter.columns
+  
+# calculating VIF for each feature
+vif_data["VIF"] = [variance_inflation_factor(vif_filter.values, i)
+                   for i in range(len(vif_filter.columns))]
+
+#Display results
+display(vif_data)
+
+##################################################
+#<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 
 #%%
-#GRAPH TESTING FOR PROP VAL -- isna ERRORS -- was due to making int instead of float?
-
-#Get slice
-# col_names1=["property_value", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
-# test_slice=dc_df.loc[0:1000, col_names1].copy()
-# #Clean slice
-# test_slice['property_value']=test_slice['property_value'].apply(clean_propval)
-# #Regplot slice
-# sns.regplot(data=test_slice, x='tract_population', y='property_value')
-# plt.show()
-
-#%%
-
-#derived_dwelling_category + occupancy_type + construction_method + total_units + interest_rate
-
-
-#Build test linear model
-model_test=ols(formula='property_value ~ C(derived_dwelling_category) + C(occupancy_type) + C(construction_method) + C(total_units) + interest_rate + tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=test_df)
+#Model with all values chosen
+model_test=ols(formula='property_value ~ C(derived_dwelling_category) + C(occupancy_type) + C(construction_method) + C(total_units) + tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=filtered_popval)
 model_test_fit=model_test.fit()
 print(model_test_fit.summary())
+
+
+#%%
+#Model based on VIF
+model_vif=ols(data=filtered_popval, formula='property_value ~ tract_minority_population_percent + tract_to_msa_income_percentage')
+model_vif_fit=model_vif.fit()
+print(model_vif_fit.summary())
+
+#%%
+#Suspected important values
+
+#derived_dwelling_category + occupancy_type + construction_method + total_units + interest_rate
+#+ tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units'
+
+#Build model
+model_test=ols(formula='property_value ~ C(occupancy_type) + C(total_units) + tract_minority_population_percent + tract_to_msa_income_percentage + tract_one_to_four_family_homes', data=filtered_popval)
+model_test_fit=model_test.fit()
+print(model_test_fit.summary())
+
+#%%
+#Model all vars that showed low p-value (final?)
+#+ C(total_units)
+model_test=ols(formula='property_value ~ C(occupancy_type) + tract_minority_population_percent + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=filtered_popval)
+model_test_fit=model_test.fit()
+print(model_test_fit.summary())
+
+##################################################
+#<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 # %%
