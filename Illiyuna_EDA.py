@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import seaborn as sns
 
 # data dictionary link below:
@@ -62,93 +63,9 @@ hmda=df[df.columns[df.columns.isin(['activity_year',
                                     'tract_minority_population_percent'])]]
 
 
-# %%
-
-#from pathlib import Path  
-#filepath = Path('/Users/illiyunaislam/OneDrive/Grad School/Courses/Data Mining/Team-3-Cobra-Py/')  
-# filepath.parent.mkdir(parents=True, exist_ok=True)
-
-
-# %%
-def filter_rows_by_values(df, col, values):
-    return df[~df[col].isin(values)]
-
-# %%
-#Subsetting loans for only non-commercial business homes
-#This variable can be dropped
-hmda=filter_rows_by_values(hmda, "business_or_commercial_purpose", [1,1111])
-bs=hmda[["business_or_commercial_purpose"]]
-bs.business_or_commercial_purpose.value_counts()
-
-
-# %%
-#subsetting loans for loans that are under 950k to capture single family homes
-
-la=hmda[['loan_amount']]
-la.loan_amount.value_counts()
-hmda1=hmda[hmda['loan_amount']<950000]
-la=hmda1[['loan_amount']]
-la.loan_amount.value_counts()
-
-# %%
-#Subsetting for, getting rid of multifamily properties
-#This variable can be dropped
-mf =hmda1[['multifamily_affordable_units']]
-mf.multifamily_affordable_units.value_counts()
-hmda1=filter_rows_by_values(hmda1, 'multifamily_affordable_units', ['0', '100', 0.0, 100.0,])
-mf =hmda1[['multifamily_affordable_units']]
-mf.multifamily_affordable_units.value_counts()
-
-# %%
-#Subsetting for Primary resident properties/ getting rid of non-primary residence
-#This variable can be dropped
-ot=hmda1[['occupancy_type']]
-ot.occupancy_type.value_counts()
-
-hmda1=filter_rows_by_values(hmda1, 'occupancy_type', [2,3])
-ot=hmda1[['occupancy_type']]
-ot.occupancy_type.value_counts()
-# %%
-#Subsetting for total units equal to or less than 4 / getting rid of total units greater than or equal to 5
-tu=hmda1[['total_units']]
-tu.total_units.value_counts()
-
-hmda1=filter_rows_by_values(hmda1, 'total_units', ['5-24','>149','25-49','100-14','50-99'])
-tu=hmda1[['total_units']]
-tu.total_units.value_counts()
-
-
-
-# %%
-#Subsetting for 30 year loans if we want to capture 15 year loans get rid of 180 below
-#This variable can be dropped
-lt=hmda1[['loan_term']]
-lt.loan_term.value_counts()
-
-# %%
-#This variable can be dropped
-hmda1=filter_rows_by_values(hmda1, 'loan_term', ['Exempt'])
-hmda1["loan_term"] = pd.to_numeric(hmda1["loan_term"])
-
-hmda1=hmda1[hmda1['loan_term']==360]
-lt=hmda1[['loan_term']]
-lt.loan_term.value_counts()
-
-# %%
-#Subsetting for purchase loans
-#This variable can be dropped
-ltype=hmda1[['loan_purpose']]
-ltype.loan_purpose.value_counts()
-hmda1=hmda1[hmda1['loan_purpose']==1]
-ltype=hmda1[['loan_purpose']]
-ltype.loan_purpose.value_counts()
-
-############################
-
 #%%
 df.head()
 # %%
-
 # Summary of Loan Amount By Loan Type
 
 result = df.groupby('loan_type').agg({'loan_amount': ['mean', 'min', 'max']})
@@ -203,10 +120,55 @@ df.groupby(['occupancy_type'], as_index=False).mean().groupby('occupancy_type')[
 
 # Lets look at action taken 
 
+ncount = len(df)
+plt.figure(figsize=(12,8))
+ax= sns.countplot(x="action_taken", data=df)
+plt.title('Distribution of Truck Configurations')
+plt.xlabel('Number of Axles')
+# Make twin axis
+ax2=ax.twinx()
 
+# Switch so count axis is on right, frequency on left
+ax2.yaxis.tick_left()
+ax.yaxis.tick_right()
+
+# Also switch the labels over
+ax.yaxis.set_label_position('right')
+ax2.yaxis.set_label_position('left')
+
+ax2.set_ylabel('Frequency [%]')
+
+for p in ax.patches:
+    x=p.get_bbox().get_points()[:,0]
+    y=p.get_bbox().get_points()[1,1]
+    ax.annotate('{:.1f}%'.format(100.*y/ncount), (x.mean(), y), 
+            ha='center', va='bottom') # set the alignment of the text
+
+# Use a LinearLocator to ensure the correct number of ticks
+ax.yaxis.set_major_locator(ticker.LinearLocator(11))
+
+# Fix the frequency range to 0-100
+ax2.set_ylim(0,100)
+ax.set_ylim(0,ncount)
+
+# And use a MultipleLocator to ensure a tick spacing of 10
+ax2.yaxis.set_major_locator(ticker.MultipleLocator(10))
+
+# Need to turn the grid on ax2 off, otherwise the gridlines end up on top of the bars
+ax2.grid(None)
+
+plt.show
+
+
+# okay so problem we have a houston,
+
+# no counts for 7 or 8 so Q2 is out the window. Sample size too small. 
+
+#%%
 # Provide a two-way table of the action taken on the loan by preapproval.
 
-
+grouped = df.groupby(['action_taken', 'preapproval'])
+grouped.size()
 # ii. Run a Chi-Squared test on the frequency table. Interpret the result.
 # iii. Examine the “Not Applicable” category. What percentage of the data falls into
 # this category?
