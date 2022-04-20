@@ -64,7 +64,7 @@ hmda=df[df.columns[df.columns.isin(['activity_year',
 
 
 #%%
-df.head()
+df.describe()
 # %%
 # Summary of Loan Amount By Loan Type
 
