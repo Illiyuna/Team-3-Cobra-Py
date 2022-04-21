@@ -1,6 +1,11 @@
 # Team 3 -- Cobra Py
 # Illiyuna Code 
 
+approval= 4 vars (logit)
+graphs that show
+
+Race and sex (over charged)- interest rate 
+
 #%%
 import csv
 import os 
