@@ -4,8 +4,8 @@
 ## Imports ##
 #############
 
-from cgi import test
-from operator import index
+#from cgi import test
+#from operator import index
 import pandas as pd
 import numpy as np
 from IPython.display import display
@@ -122,6 +122,25 @@ def make_hist_kde(data, x, bins):
     plt.show()
 
 ##################################################
+
+def create_vif_table(df, vars):
+
+    vif_filter = df.iloc[:, np.r_[vars]]
+  
+    # VIF dataframe
+    vif_data = pd.DataFrame()
+    vif_data["feature"] = vif_filter.columns
+    
+    # calculating VIF for each feature
+    vif_data["VIF"] = [variance_inflation_factor(vif_filter.values, i)
+                    for i in range(len(vif_filter.columns))]
+
+    #Display results
+    display(vif_data)
+    
+    return None
+
+##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 
 #%%
@@ -129,21 +148,25 @@ def make_hist_kde(data, x, bins):
 dc_df=pd.read_csv("data/dc_df.csv")
 
 #%%
-# show number of obs and display df head
+#show number of obs and display df head
 print(f'Dc observations: {len(dc_df)}')
 display(dc_df.head().style.set_sticky(axis="index"))
 
 #%%
+#Summary Stats
+#dc_df.property_value=dc_df.loc[:, 'property_value'].apply(clean_propval)
+#display(dc_df.describe().style.set_sticky(axis="index"))
 
-#pd.set_option('display.float_format', lambda x: '%.2f' % x)
-    
+#%%
+
 #Subset for desired test data
+#pd.set_option('display.float_format', lambda x: '%.2f' % x)
 col_names1=["property_value", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
 col_names2=["property_value", "derived_dwelling_category", "occupancy_type", "construction_method", "total_units", "interest_rate", "tract_population", "tract_minority_population_percent", "ffiec_msa_md_median_family_income", "tract_to_msa_income_percentage", "tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
 test_df=dc_df[col_names2].copy()
 
 #Change property_value column to numerical
-test_df.iloc[:,0:1]=test_df.loc[:, 'property_value'].apply(clean_propval)#.astype('Int64')
+test_df.iloc[:,0:1]=test_df.loc[:, 'property_value'].apply(clean_propval)
 
 #Filter for houses below 1.25 mil
 cut_off=2000000
@@ -152,6 +175,8 @@ filtered_popval=test_df[cond]
 
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
+
+#%%
 
 #Summary Statistics
 display(filtered_popval.head().style.set_sticky(axis="index"))
@@ -164,6 +189,11 @@ print()
 display(filtered_popval.construction_method.value_counts())
 print()
 display(filtered_popval.total_units.value_counts())
+#Corrplot
+display(round(filtered_popval.corr(), 3).style.set_sticky(axis="index"))
+
+#pairplot
+#sns.pairplot(filtered_popval)
 
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
@@ -211,6 +241,9 @@ g2.map(sns.regplot, color="#b3b3b3", scatter_kws={'alpha':0.03}, line_kws={"colo
 plt.ticklabel_format(style='plain')
 plt.show()
 
+#%%
+#Additional variable comparison
+
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 
@@ -218,22 +251,12 @@ plt.show()
 #Check VIF
 #resource: https://www.geeksforgeeks.org/detecting-multicollinearity-with-vif-python/
 
-# the independent variables set
-vars1=[7,9]
-vars2=[7,9,10,11,12]
-
-vif_filter = filtered_popval.iloc[:, np.r_[vars2]]
-  
-# VIF dataframe
-vif_data = pd.DataFrame()
-vif_data["feature"] = vif_filter.columns
-  
-# calculating VIF for each feature
-vif_data["VIF"] = [variance_inflation_factor(vif_filter.values, i)
-                   for i in range(len(vif_filter.columns))]
-
-#Display results
-display(vif_data)
+#Check for collinearity with VIF
+create_vif_table(filtered_popval, [6,7,9,10,11,12])
+create_vif_table(filtered_popval, [7,9,10,11,12])
+create_vif_table(filtered_popval, [7,9,10,11])
+create_vif_table(filtered_popval, [7,9,11])
+create_vif_table(filtered_popval, [7,9])
 
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
