@@ -260,5 +260,59 @@ print(overcharged_df.groupby('derived_race').mean())
 
 # What is joint?
 
+# %%
+# SEX
+
+#Facet Grid of total loan cost by sex
+print('\nTotal Loan Cost by Sex, Facet Graph')
+g=sns.FacetGrid(overcharged_df[loan_cond], col="derived_sex", hue="derived_sex")
+g.map_dataframe(sns.histplot, x="total_loan_costs", bins=25)
+plt.show()
+
+#Facet Grid of interest rate by sex
+print('\nInterest Rate by Sex, Facet Graph')
+g=sns.FacetGrid(overcharged_df[intr_cond], col="derived_sex", hue="derived_sex")
+g.map_dataframe(sns.histplot, x="interest_rate", bins=25)
+plt.show()
+
+#Facet Grid of discount points by sex
+print('\nDiscount Points by Sex, Facet Graph')
+g=sns.FacetGrid(overcharged_df, col="derived_sex", hue="derived_sex")
+g.map_dataframe(sns.histplot, x="discount_points", bins=25)
+plt.show()
+
+#Facet Grid of lender credits by sex
+print('\nLender Credits by Sex, Facet Graph')
+g=sns.FacetGrid(overcharged_df, col="derived_sex", hue="derived_sex")
+g.map_dataframe(sns.histplot, x="lender_credits", bins=25)
+plt.show()
+
+
+#%%
+# RACE
+
+#Facet Grid of total loan cost by race
+print('\nTotal Loan Cost by Race, Facet Graph')
+g=sns.FacetGrid(overcharged_df[loan_cond], col="derived_race", hue="derived_race")
+g.map_dataframe(sns.histplot, x="total_loan_costs", bins=25)
+plt.show()
+
+#Facet Grid of interest rate by race
+print('\nInterest Rate by Race, Facet Graph')
+g=sns.FacetGrid(overcharged_df[intr_cond], col="derived_race", hue="derived_race")
+g.map_dataframe(sns.histplot, x="interest_rate", bins=25)
+plt.show()
+
+#Facet Grid of discount points by race
+print('\nDiscount Points by Race, Facet Graph')
+g=sns.FacetGrid(overcharged_df, col="derived_race", hue="derived_race")
+g.map_dataframe(sns.histplot, x="discount_points", bins=25)
+plt.show()
+
+#Facet Grid of lender credits by race
+print('\nLender Credits by Race, Facet Graph')
+g=sns.FacetGrid(overcharged_df, col="derived_race", hue="derived_race")
+g.map_dataframe(sns.histplot, x="lender_credits", bins=25)
+plt.show()
 
 # %%

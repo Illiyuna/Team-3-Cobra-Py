@@ -581,7 +581,7 @@ print('\nLender Credits Distribution')
 sns.histplot(data=overcharged_df, x='lender_credits', bins=50)
 plt.show()
 
-#regplot total interest rate against total loan cost
+#regplot interest rate against total loan cost
 print('\nScatterplot with LR line, Interest Rate Against Total Loan Cost')
 g=sns.regplot(data=overcharged_df[combined_cond], x='total_loan_costs',
                 y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
