@@ -197,6 +197,9 @@ print(overcharged_df.groupby('derived_race').mean())
 # Black people and Hawaiians have highest IR, but Hawaiians receive the most discount points. 
 
 # Are finacial inst. charging higher IR despite discounts???
+### What is the probability of getting a high cost loan based on your sex & race??
+### Are men getting more or bigger loans than women? 
+### Blacks get more credits but still get higher IR? Hypocrisy of financial inst.
 
 
 #%%
@@ -415,19 +418,59 @@ g.map_dataframe(sns.histplot, x="lender_credits", bins=25)
 plt.show()
 
 
-
-### What is the probability of getting a high cost loan based on your sex & race??
-### Are men getting more or bigger loans than women? 
-### Blacks get more credits but still get higher IR? Hypocrisy of financial inst.
-
 #%%
 
-# Statistical tests and Model Building 
+# Are men getting more/ bigger loans than women?? 
 
+sns.barplot(data=init_df, 
+            x='loan_type', 
+            y='loan_amount', 
+            hue='derived_sex', ci=None)
+plt.xlabel('Type of Loan',size=14)
+plt.ylabel('Average Loan Amount',size=14)
+plt.title('Average Loan Amount & Type by Sex') 
+x_var= ['Conventional', 
+        'FHA Insured', 
+        'VA Insured',
+        'RHS or FSA Insured']
+plt.xticks([0,1,2,3], x_var, rotation=20)       
+plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.show()
 
+# Yes men are getting higher loans on average, esp for conventional and FHA loans.
+# Veterans are not showing much difference. 
+#%%
 
-# Anovas for everything 
-# Tukey post hoc 
+### Statistical tests and Model Building 
+
+## Anova Tests for Sex
+import scipy.stats as stats
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+
+# Function for Anova Table 
+def anova_table(aov):
+    aov['mean_sq'] = aov[:]['sum_sq']/aov[:]['df']
+
+    aov['eta_sq'] = aov[:-1]['sum_sq']/sum(aov['sum_sq'])
+
+    aov['omega_sq'] = (aov[:-1]['sum_sq']-(aov[:-1]['df']*aov['mean_sq'][-1]))/(sum(aov['sum_sq'])+aov['mean_sq'][-1])
+
+    cols = ['sum_sq', 'df', 'mean_sq', 'F', 'PR(>F)', 'eta_sq', 'omega_sq']
+    aov = aov[cols]
+    return aov
+ #
+#   N2 (eta-sq)is the exact same thing as R2
+#  W2 (omega-sq) is considered a better measure of effect size since it is unbiased in it's calculation by accounting for the degrees of freedom in the model
+
+#%%
+model_TLC = ols('total_loan_costs ~ C(derived_sex)', data=overcharged_df).fit()
+aov_TLC= sm.stats.anova_lm(model_TLC, typ=2)
+anova_table(aov_TLC)
+
+#There is a statistically significant difference between
+# the groups and their effects the libido, F= 37.94, p-value= small,
+# with an overall small effect in w2
 
 
 
