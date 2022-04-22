@@ -443,38 +443,38 @@ plt.show()
 
 ### Statistical tests and Model Building 
 
+overcharged_stats =overcharged_df.copy()
 ## Anova Tests for Sex
 import scipy.stats as stats
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
-
-# Function for Anova Table 
-def anova_table(aov):
-    aov['mean_sq'] = aov[:]['sum_sq']/aov[:]['df']
-
-    aov['eta_sq'] = aov[:-1]['sum_sq']/sum(aov['sum_sq'])
-
-    aov['omega_sq'] = (aov[:-1]['sum_sq']-(aov[:-1]['df']*aov['mean_sq'][-1]))/(sum(aov['sum_sq'])+aov['mean_sq'][-1])
-
-    cols = ['sum_sq', 'df', 'mean_sq', 'F', 'PR(>F)', 'eta_sq', 'omega_sq']
-    aov = aov[cols]
-    return aov
- #
-#   N2 (eta-sq)is the exact same thing as R2
-#  W2 (omega-sq) is considered a better measure of effect size since it is unbiased in it's calculation by accounting for the degrees of freedom in the model
+from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 #%%
-model_TLC = ols('total_loan_costs ~ C(derived_sex)', data=overcharged_df).fit()
-aov_TLC= sm.stats.anova_lm(model_TLC, typ=2)
-anova_table(aov_TLC)
+# One way Anova for Sex 
 
-#There is a statistically significant difference between
-# the groups and their effects the libido, F= 37.94, p-value= small,
-# with an overall small effect in w2
+# Total Loan Costs 
+model_TLC= ols('total_loan_costs ~ C(derived_sex)',
+            data=overcharged_stats).fit()
+result_TLC = sm.stats.anova_lm(model_TLC, type=2)
+  
+# Print the result
+print(result_TLC)
 
+tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_sex'], alpha=0.05)
+print(tukey_TLC)
 
+# Means for male & female are unequal. 
 
-# Model: 
+#%%
+#Two Way Anova
+model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+C(derived_sex):C(derived_race)',
+            data=overcharged_stats).fit()
+result = sm.stats.anova_lm(model, type=2)
+  
+# Print the result
+print(result)
 
-#1. dep: IR, loan amount, 
 # %%
