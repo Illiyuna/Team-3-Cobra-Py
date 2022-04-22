@@ -210,9 +210,9 @@ print('\nGraphical Exploration: Overcharged DF...\n')
 #Top-level graphs
 print('\nOvercharged DF Top-level Graphs')
 
-#barplot of race
+# Barplot of Race
 print('\nBar plot of Race')
-labs=['White', 'Black or African American',
+labs=['White','Race Not Available', 'Black or African American',
      'Asian', 'Joint', '2 or more minority races',
      'American Indian or Alaska Native',
      'Native Hawaiian or Other Pacific Islander', 'Other']
@@ -220,6 +220,7 @@ race=overcharged_df['derived_race'].value_counts()
 g=sns.barplot(x=race.index, y=race.values,
               hue=race.index, hue_order=labs,
               dodge=False)
+plt.title('Barplot of Race')
 plt.xticks([])
 plt.show()
 
@@ -311,107 +312,6 @@ plt.xticks(rotation=45)
 plt.show()
 
 # Fix x-ticks for race plots. 
-#%%
-
-#Graphs grouping by interactive terms: Interest Rate
-print('\nGraphs grouping by interactive terms: Interest Rate\n')
-
-#interest rate by sex hist
-print('\nInterest Rate by Sex, stacked')
-sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', hue='derived_sex', multiple="stack", bins=25)
-plt.xticks([])
-plt.show()
-
-print('\nInterest Rate by Sex, relative rate')
-sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', hue='derived_sex', bins=25)
-plt.xticks([])
-plt.show()
-
-#interest rate by race hist
-print('\nInterest Rate by Race, stacked')
-labs=['Native Hawaiian or Other Pacific Islander',
-      'American Indian or Alaska Native', 'Joint',
-      '2 or more minority races', 'Asian',
-      'Black or African American', 'White',
-      'Race Not Available']
-sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', hue='derived_race', multiple="stack", bins=25)
-             #hue_order=labs)
-plt.xticks([])
-plt.legend(title='Race', labels=labs, loc='center', bbox_to_anchor=(0.97, 0.75), borderaxespad=0.2)
-plt.show()
-
-print('\nInterest Rate by Race, relative rate')
-sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', hue='derived_race', bins=25)#,
-             #hue_order=labs)
-plt.xticks([])
-plt.legend(title='Race', labels=labs, loc='center', bbox_to_anchor=(0.97, 0.75), borderaxespad=0.2)
-plt.show()
-
-#Facet Grid of interest rate by sex
-print('\nInterest Rate by Sex, Facet Graph')
-g=sns.FacetGrid(overcharged_df[intr_cond], col="derived_sex", hue="derived_sex")
-g.map_dataframe(sns.histplot, x="interest_rate", bins=25)
-plt.show()
-
-#Facet Grid of interest rate by race
-print('\nInterest Rate by Race, Facet Graph')
-g=sns.FacetGrid(overcharged_df[intr_cond], col="derived_race", hue="derived_race")
-g.map_dataframe(sns.histplot, x="interest_rate", bins=25)
-plt.show()
-
-
-##################################################
-
-#%%
-
-#Graphs grouping by interactive terms: Total Loan Cost
-print('\nGraphs grouping by interactive terms: Total Loan Cost\n')
-
-#total loan costs by sex hist
-print('\nTotal Loan Cost by Sex, stacked')
-sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', hue='derived_sex', multiple="stack", bins=25)
-plt.xticks([])
-plt.show()
-
-print('\nTotal Loan Cost by Sex, relative rate')
-sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', hue='derived_sex', bins=25)
-plt.xticks([])
-plt.show()
-
-#total loan costs by race hist
-#LABS ARE WRONG ORDER! NEED TO CHECK!!
-print('\nTotal Loan Cost by Race, stacked')
-labs=['Native Hawaiian or Other Pacific Islander',
-      'American Indian or Alaska Native', 'Joint',
-      '2 or more minority races', 'Asian',
-      'Black or African American', 'White',
-      'Race Not Available']
-sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', hue='derived_race', multiple="stack", bins=25)
-             #hue_order=labs)
-plt.xticks([])
-plt.legend(title='Race', labels=labs, loc='center', bbox_to_anchor=(0.97, 0.75), borderaxespad=0.2)
-plt.show()
-
-print('\nTotal Loan Cost by Race, relative rate')
-sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', hue='derived_race', bins=25)#,
-             #hue_order=labs)
-plt.xticks([])
-plt.legend(title='Race', labels=labs, loc='center', bbox_to_anchor=(0.97, 0.75), borderaxespad=0.2)
-plt.show()
-
-#Facet Grid of total loan cost by sex
-print('\nTotal Loan Cost by Sex, Facet Graph')
-g=sns.FacetGrid(overcharged_df[loan_cond], col="derived_sex", hue="derived_sex")
-g.map_dataframe(sns.histplot, x="total_loan_costs", bins=25)
-plt.show()
-
-#Facet Grid of total loan cost by race
-print('\nTotal Loan Cost by Race, Facet Graph')
-g=sns.FacetGrid(overcharged_df[loan_cond], col="derived_race", hue="derived_race")
-g.map_dataframe(sns.histplot, x="total_loan_costs", bins=25)
-plt.show()
-
-##################################################
 
 #%%
 
@@ -457,97 +357,6 @@ plt.show()
 
 corrMatrix = overcharged_df.corr()
 sns.heatmap(corrMatrix, annot=True)
-plt.show()
-
-
-
-
-
-
-###########################################
-## Graphical Exploration: Overcharged DF ##
-###########################################
-
-print('\nGraphical Exploration: Overcharged DF...\n')
-
-overcharged_df=overcharged_df.dropna()
-
-#Top-level graphs
-print('\nOvercharged DF Top-level Graphs')
-
-#barplot of race
-print('\nBar plot of Race')
-labs=['White', 'Race Not Available', 'Black or African American',
-     'Asian', 'Joint', '2 or more minority races',
-     'American Indian or Alaska Native',
-     'Native Hawaiian or Other Pacific Islander', 'Other']
-race=overcharged_df['derived_race'].value_counts()
-g=sns.barplot(x=race.index, y=race.values,
-              hue=race.index, hue_order=labs,
-              dodge=False)
-plt.xticks([])
-plt.show()
-
-#barplot of sex
-print('\nBar plot of Sex')
-sex=overcharged_df['derived_sex'].value_counts()
-g=sns.barplot(x=sex.index, y=sex.values)
-plt.show()
-
-#total loan cost hist
-print('\nTotal Loan Cost Distribution')
-sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', bins=30)
-plt.show()
-
-#interest rates hist
-print('\nInterest Rate Distribution')
-sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', bins=25)
-plt.xticks([])
-plt.show()
-
-# discount points hist
-print('\nDiscount Points Distribution')
-sns.histplot(data=overcharged_df, x='discount_points', bins=50)
-plt.show()
-
-# lender credits hist
-print('\nLender Credits Distribution')
-sns.histplot(data=overcharged_df, x='lender_credits', bins=50)
-plt.show()
-
-#regplot interest rate against total loan cost
-print('\nScatterplot with LR line, Interest Rate Against Total Loan Cost')
-g=sns.regplot(data=overcharged_df[combined_cond], x='total_loan_costs',
-                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot discount points vs lender credits 
-print('\nScatterplot with LR line, Discount Points Against Lender Credits')
-g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='discount_points', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot discount points vs interest rate 
-print('\nScatterplot with LR line, Interest Rate Against Discount Points')
-g=sns.regplot(data=overcharged_df, x='discount_points',
-                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot total loan costs vs lender credits 
-print('\nScatterplot with LR line, Total Loan Costs Against Lender Credits')
-g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='total_loan_costs', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot interest rate vs lender credits 
-print('\nScatterplot with LR line, Interest Rates Against Lender Credits')
-g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
 plt.show()
 
 # %%
@@ -611,6 +420,11 @@ plt.show()
 ### Are men getting more or bigger loans than women? 
 ### Blacks get more credits but still get higher IR? Hypocrisy of financial inst.
 
+#%%
+
+# Statistical tests and Model Building 
+
+
 
 # Anovas for everything 
 # Tukey post hoc 
@@ -620,3 +434,4 @@ plt.show()
 # Model: 
 
 #1. dep: IR, loan amount, 
+# %%
