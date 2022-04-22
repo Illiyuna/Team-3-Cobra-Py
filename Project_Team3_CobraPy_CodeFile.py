@@ -19,7 +19,7 @@ import os
 
 from statsmodels.formula.api import ols
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-
+from dython.nominal import identify_nominal_columns
 
 
 ##################################################
@@ -185,8 +185,8 @@ def create_vif_table(df, vars):
 ###############
 
 #Load in full dc_df
-filepath="data/dc_df.csv"
-dc_df=pd.read_csv(filepath)
+#filepath="data/dc_df.csv"
+dc_df=pd.read_csv('dc_df.csv')
 
 #%%
 
@@ -268,6 +268,7 @@ intial_col_list =['activity_year',
                 "construction_method",
                 'total_units',
                 'interest_rate',
+                'total_loan_costs',
                 'tract_population',
                 'tract_minority_population_percent',
                 'ffiec_msa_md_median_family_income',
@@ -276,7 +277,10 @@ intial_col_list =['activity_year',
                 'tract_one_to_four_family_homes',
                 'tract_median_age_of_housing_units']
 
-over_charged_col_list=['total_loan_costs', 'interest_rate', 'derived_sex', 'derived_race']
+over_charged_col_list=['total_loan_costs', 
+                       'interest_rate', 
+                       'derived_sex', 
+                       'derived_race']
 
 propval_col_list=['property_value',
                 'derived_dwelling_category',
@@ -314,8 +318,10 @@ propval_df=dc_df[propval_col_list].copy()
 #Set cost of loan cut off value
 loan_cutoff=20000
 #Set min and max interest rate values
+# min
 intr_low1=1.7
 intr_high1=4.8
+# max 
 intr_low2=1.5
 intr_high2=5.5
 #Set up filters for each and combined filter
@@ -348,17 +354,89 @@ print('\nDisplay Summary statistics for Initial DF...\n')
     #*******************************#
 ##### INSERT Illiyuna's tables here #####
     #*******************************#
+    
+# init_df.info()
+
+# Check missing variables 
+# init_df.isnull().sum() / init_df.shape[0] * 100
+
+
+
+# chnage numbers to actual loan names 
+#%%
+
+# Overcharged subset
+print('\nDisplay Summary statistics for Overcharged DF...\n')
+
+overcharged_df=overcharged_df.dropna()
+overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
+# overcharged_df[loan_cond].describe()
+# overcharged_df[intr_cond].describe()
+# overcharged_df[intr_cond2].describe()
+# overcharged_df[combined_cond].describe()
+
+# Dropping "Sex Not Available" From Derived Sex
+overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
+
+#%%
+# Overcharged Gender Plots 
+
+# Hypo: is that single women are overcharged compared to single men. 
+
+sns.stripplot(data=overcharged_df,
+              x='derived_sex', 
+              y='interest_rate',
+              palette='mako')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Interest Rate',size=14)
+plt.title('Interest Rates by Sex') 
+plt.show()
+
+sns.stripplot(data=overcharged_df, 
+                x='derived_sex',
+                y='total_loan_costs')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Total Loan Cost',size=14)
+plt.title('Total Loan Costs by Sex') 
+
+plt.show()
+#%%
+
+# Overcharged Race Plots 
+
+# Hypo: minorities are charged more than caucasians  
+
+sns.stripplot(data=overcharged_df,
+              x='derived_race', 
+              y='interest_rate',
+              palette='mako')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Interest Rate',size=14)
+plt.title('Interest Rates by Race') 
+plt.xticks(rotation=45)
+plt.show()
+
+sns.stripplot(data=overcharged_df, 
+                x='derived_race',
+                y='total_loan_costs')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Total Loan Cost',size=14)
+plt.title('Total Loan Costs by Race') 
+plt.xticks(rotation=45)
+plt.show()
+
+# Fix x-ticks for race plots. 
 
 #%%
 
-#overcharged subset
-print('\nDisplay Summary statistics for Overcharged DF...\n')
+# Correlation Matrix for Overcharged 
 
-#overcharged_df=overcharged_df.dropna()
-#overcharged_df[loan_cond].describe()
-#overcharged_df[intr_cond].describe()
-#overcharged_df[intr_cond2].describe()
-#overcharged_df[combined_cond].describe()
+corrMatrix = overcharged_df.corr()
+sns.heatmap(corrMatrix, annot=True)
+plt.show()
+
+
+
 
 #%%
 
@@ -404,6 +482,33 @@ print('\nGraphical Exploration: Initial DF...\n')
     #*******************************#
 ##### INSERT Illiyuna's graphs here #####
     #*******************************#
+
+#A grouped bar chart with the average loan value by loan 
+# type. Label the averages for each bar on the chart.
+
+# Used construction method as a proxy from property type 
+# Loan Type
+# 1 -- Conventional (not insured or guaranteed by FHA VA RHS or FSA)
+# 2 -- Federal Housing Administration insured (FHA)
+# 3 -- Veterans Affairs guranteed (VA)
+# 4 -- USDA Rural Housing Service or Farm Service Agency guaranteed (RHS or FSA)
+
+sns.barplot(data=init_df, 
+            x='loan_type', 
+            y='loan_amount', 
+            hue='construction_method', ci=None)
+plt.xlabel('Type of Loan',size=14)
+plt.ylabel('Average Loan Amount',size=14)
+plt.title('Average Loan Amount & Type by Property Type') 
+x_var= ['Conventional', 
+        'FHA Insured', 
+        'VA Insured',
+        'RHS or FSA Insured']
+plt.xticks([0,1,2,3], x_var, rotation=20)
+labels= ['Site Built', 'Manufactured Home']         
+plt.legend(labels,loc='upper left')
+plt.show()
+
 
 #Graph Groupings of preapproval with action taken
 #Need tables Illiyuna made for this to run

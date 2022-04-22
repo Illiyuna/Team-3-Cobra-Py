@@ -1,10 +1,10 @@
 # Team 3 -- Cobra Py
 # Illiyuna Code 
 
-approval= 4 vars (logit)
-graphs that show
+# approval= 4 vars (logit)
+# graphs that show
 
-Race and sex (over charged)- interest rate 
+# Race and sex (over charged)- interest rate 
 
 #%%
 import csv
@@ -36,37 +36,6 @@ os.getcwd()
 #%%
 # Import Data 
 df = pd.read_csv('dc_df.csv')
-
-
-# %%
-hmda=df[df.columns[df.columns.isin(['activity_year', 
-                                    'lei', 
-                                    'state_code',
-                                    'census_tract', 
-                                    'derived_loan_product_type',
-                                    'derived_ethnicity', 
-                                    'derived_race', 
-                                    'derived_sex', 
-                                    'action_taken',
-                                    'preapproval', 
-                                    'loan_type', 
-                                    'loan_purpose',
-                                    'business_or_commercial_purpose', 
-                                    'loan_amount',
-                                    'combined_loan_to_value_ratio', 
-                                    'interest_rate',
-                                    'loan_term',
-                                    'property_value', 
-                                    'occupancy_type',
-                                    'total_units', 
-                                    'multifamily_affordable_units', 
-                                    'income', 
-                                    'debt_to_income_ratio',
-                                    'applicant_age', 
-                                    'co_applicant_age', 
-                                    'tract_population', 
-                                    'tract_minority_population_percent'])]]
-
 
 #%%
 df.describe()
@@ -128,8 +97,8 @@ df.groupby(['occupancy_type'], as_index=False).mean().groupby('occupancy_type')[
 ncount = len(df)
 plt.figure(figsize=(12,8))
 ax= sns.countplot(x="action_taken", data=df)
-plt.title('Distribution of Truck Configurations')
-plt.xlabel('Number of Axles')
+plt.title('Action Taken')
+plt.xlabel(' Taken')
 # Make twin axis
 ax2=ax.twinx()
 
