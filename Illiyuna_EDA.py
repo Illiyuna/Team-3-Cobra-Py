@@ -174,31 +174,29 @@ overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
 
 # Dropping "Sex Not Available" From Derived Sex
 overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
-overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Race Not Available']
+overcharged_df = overcharged_df[overcharged_df.derived_race!= 'Race Not Available']
 
-# Check that men and women are in equal numbers 
-sns.countplot(overcharged_df['derived_sex'])
 # %%
-# First glimpse at pricing and other
-# characteristics across borrower race and ethnicity groups
-
-# print(overcharged_df.groupby('derived_sex').describe())
-# print(overcharged_df.groupby('derived_race').describe())
-# got to messy but shows that there are more men than women
+# First glimpse of variable characteristics grouped by sex or race
 
 print(overcharged_df.groupby('derived_sex').mean())
 print(overcharged_df.groupby('derived_race').mean())
+
 # From the mean tables,
 # Single women paid lower loan costs compared to men and joint on average.
-# Married people pay less IR, while women pay higher IR. 
+# However, this makes sense since they receive higher lender credits than men or married couples.
+# Single women pay highest interest and get less discount points on average. 
 # Men get more discount points (IR reduction)
-# Females get more lender points (closing reduction)
 
 
-# Native Americans, African Americans and Hawaiians pays most loan costs.
-# Blacks highest IR, highest LC then why is closing costs high for them? 
 
-# What is joint?
+# Asians, Blacks and Hawaiians pays most loan costs.
+# This is weird because Black people receive the highes lender credits. 
+# White people have lowest LC still lower TLC. 
+
+# Black people and Hawaiians have highest IR, but Hawaiians receive the most discount points. 
+
+# Are finacial inst. charging higher IR despite discounts???
 
 
 #%%
@@ -214,7 +212,7 @@ print('\nOvercharged DF Top-level Graphs')
 
 #barplot of race
 print('\nBar plot of Race')
-labs=['White', 'Race Not Available', 'Black or African American',
+labs=['White', 'Black or African American',
      'Asian', 'Joint', '2 or more minority races',
      'American Indian or Alaska Native',
      'Native Hawaiian or Other Pacific Islander', 'Other']
