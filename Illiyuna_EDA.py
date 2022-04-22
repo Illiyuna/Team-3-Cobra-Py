@@ -241,3 +241,24 @@ plt.show()
 # %%
 # First glimpse at pricing and other
 # characteristics across borrower race and ethnicity groups
+
+# print(overcharged_df.groupby('derived_sex').describe())
+# print(overcharged_df.groupby('derived_race').describe())
+# got tto messy but shows that there are more men than women
+
+print(overcharged_df.groupby('derived_sex').mean())
+print(overcharged_df.groupby('derived_race').mean())
+# From the mean tables,
+# Single women paid lower loan costs compared to men and joint on average.
+# Married people pay less IR, while women pay higher IR. 
+# Men get more discount points (IR reduction)
+# Females get more lender points (closing reduction)
+
+
+# Native Americans, African Americans and Hawaiians pays most loan costs.
+# Blacks highest IR, highest LC then why is closing costs high for them? 
+
+# What is joint?
+
+
+# %%

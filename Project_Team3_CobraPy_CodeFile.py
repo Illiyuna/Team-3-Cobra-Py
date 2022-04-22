@@ -19,7 +19,7 @@ import os
 
 from statsmodels.formula.api import ols
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-from dython.nominal import identify_nominal_columns
+
 
 
 ##################################################
@@ -212,6 +212,10 @@ dc_df['property_value']=dc_df.loc[:, 'property_value'].apply(clean_strnumbers_to
 dc_df['interest_rate']=dc_df.loc[:, 'interest_rate'].apply(clean_int_rate)
 #total_loan_costs into float
 dc_df['total_loan_costs']=dc_df.loc[:, 'total_loan_costs'].apply(clean_strnumbers_to_numeric)
+# discount_points into float
+dc_df['discount_points']=dc_df.loc[:, 'discount_points'].apply(clean_strnumbers_to_numeric)
+# lender-credits into float 
+dc_df['lender_credits']=dc_df.loc[:, 'lender_credits'].apply(clean_strnumbers_to_numeric)
 
 ##################################################
 
@@ -280,7 +284,9 @@ intial_col_list =['activity_year',
 over_charged_col_list=['total_loan_costs', 
                        'interest_rate', 
                        'derived_sex', 
-                       'derived_race']
+                       'derived_race',
+                       'discount_points',
+                       'lender_credits']
 
 propval_col_list=['property_value',
                 'derived_dwelling_category',
@@ -565,10 +571,41 @@ sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', bins=25)
 plt.xticks([])
 plt.show()
 
+# discount points hist
+print('\nDiscount Points Distribution')
+sns.histplot(data=overcharged_df, x='discount_points', bins=50)
+plt.show()
+
+# lender credits hist
+print('\nLender Credits Distribution')
+sns.histplot(data=overcharged_df, x='lender_credits', bins=50)
+plt.show()
+
 #regplot total interest rate against total loan cost
 print('\nScatterplot with LR line, Interest Rate Against Total Loan Cost')
 g=sns.regplot(data=overcharged_df[combined_cond], x='total_loan_costs',
                 y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot discount points vs lender credits 
+print('\nScatterplot with LR line, Discount Points Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='lender_credits',
+                y='discount_points', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot discount points vs interest rate 
+print('\nScatterplot with LR line, Interest Rate Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='discount_points',
+                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot discount points vs lender credits 
+print('\nScatterplot with LR line, Discount Points Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='lender_credits',
+                y='discount_points', scatter_kws={'alpha':0.03}, color="gray")
 g.lines[0].set_color("pink")
 plt.show()
 
