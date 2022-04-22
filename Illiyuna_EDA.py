@@ -576,7 +576,7 @@ print(result)
 
 #%%
 # Interest Rate
-model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+model = ols('interest_rate ~ C(derived_sex) + C(derived_race) +\
 C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
@@ -584,9 +584,10 @@ result = sm.stats.anova_lm(model, type=2)
 # Print the result
 print(result)
 
+# all of them are significant 
 #%%
-# Total Loan Coats 
-model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+# Lender Credit 
+model = ols('lender_credits ~ C(derived_sex) + C(derived_race) +\
 C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
@@ -594,12 +595,16 @@ result = sm.stats.anova_lm(model, type=2)
 # Print the result
 print(result)
 
+# sex or race doesnt affect lender credits 
+
 #%%
-# Total Loan Coats 
-model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+# Discount Points
+model = ols('discount_points ~ C(derived_sex) + C(derived_race) +\
 C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
   
 # Print the result
 print(result)
+
+# all of them are significant 
