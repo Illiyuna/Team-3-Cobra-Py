@@ -366,9 +366,8 @@ print('\nDisplay Summary statistics for Initial DF...\n')
 # Check missing variables 
 # init_df.isnull().sum() / init_df.shape[0] * 100
 
-
-
 # chnage numbers to actual loan names 
+
 #%%
 
 # Overcharged subset
