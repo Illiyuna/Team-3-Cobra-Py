@@ -596,16 +596,23 @@ g.lines[0].set_color("pink")
 plt.show()
 
 #regplot discount points vs interest rate 
-print('\nScatterplot with LR line, Interest Rate Against Lender Credits')
+print('\nScatterplot with LR line, Interest Rate Against Discount Points')
 g=sns.regplot(data=overcharged_df, x='discount_points',
                 y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
 g.lines[0].set_color("pink")
 plt.show()
 
-#regplot discount points vs lender credits 
-print('\nScatterplot with LR line, Discount Points Against Lender Credits')
+#regplot total loan costs vs lender credits 
+print('\nScatterplot with LR line, Total Loan Costs Against Lender Credits')
 g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='discount_points', scatter_kws={'alpha':0.03}, color="gray")
+                y='total_loan_costs', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot interest rate vs lender credits 
+print('\nScatterplot with LR line, Interest Rates Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='lender_credits',
+                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
 g.lines[0].set_color("pink")
 plt.show()
 
