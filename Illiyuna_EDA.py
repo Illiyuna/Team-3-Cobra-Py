@@ -1,10 +1,5 @@
 # Team 3 -- Cobra Py
-# Illiyuna Code 
-
-# approval= 4 vars (logit)
-# graphs that show
-
-# Race and sex (over charged)- interest rate 
+# Overcharged
 
 #%%
 import csv
@@ -18,7 +13,7 @@ import seaborn as sns
 # data dictionary link below:
 #https://ffiec.cfpb.gov/documentation/2018/lar-data-fields/
 
-#%% Used to unzip file
+#%% Used to Unzip file & Set Working Directory 
 
 # from zipfile import ZipFile
 # with ZipFile('2018_public_lar_csv.zip', 'r') as zipObject:
@@ -29,9 +24,9 @@ import seaborn as sns
 #            zipObject.extract(fileName, 'temp_py')
 #            print('All the python files are extracted')
 
-os.getcwd()
-os.chdir('/Users/illiyunaislam/OneDrive/Grad School/Courses/Data Mining/Team-3-Cobra-Py')
-os.getcwd()
+# os.getcwd()
+# os.chdir('/Users/illiyunaislam/OneDrive/Grad School/Courses/Data Mining/Team-3-Cobra-Py')
+# os.getcwd()
 
 #%%
 # Import Data 
@@ -162,10 +157,11 @@ grouped.size()
 #Is there a statistically significant difference between the “pre-approval denied”
 # and “application denied” groups for Income, Race, Sex, and Lien Status?
 
+###################################################################################################################
 
+#                                        RACE & GENDER 
 
-#                RACE & GENDER 
-
+#%%
 # Overcharged subset
 print('\nDisplay Summary statistics for Overcharged DF...\n')
 
@@ -178,55 +174,32 @@ overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
 
 # Dropping "Sex Not Available" From Derived Sex
 overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
+overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Race Not Available']
 
-#%%
-# Overcharged Gender Plots 
+# Check that men and women are in equal numbers 
+sns.countplot(overcharged_df['derived_sex'])
+# %%
+# First glimpse at pricing and other
+# characteristics across borrower race and ethnicity groups
 
-# Hypo: is that single women are overcharged compared to single men. 
+# print(overcharged_df.groupby('derived_sex').describe())
+# print(overcharged_df.groupby('derived_race').describe())
+# got to messy but shows that there are more men than women
 
-sns.stripplot(data=overcharged_df,
-              x='derived_sex', 
-              y='interest_rate',
-              palette='mako')
-plt.xlabel('Derived Sex',size=14)
-plt.ylabel('Interest Rate',size=14)
-plt.title('Interest Rates by Sex') 
-plt.show()
+print(overcharged_df.groupby('derived_sex').mean())
+print(overcharged_df.groupby('derived_race').mean())
+# From the mean tables,
+# Single women paid lower loan costs compared to men and joint on average.
+# Married people pay less IR, while women pay higher IR. 
+# Men get more discount points (IR reduction)
+# Females get more lender points (closing reduction)
 
-sns.stripplot(data=overcharged_df, 
-                x='derived_sex',
-                y='total_loan_costs')
-plt.xlabel('Derived Sex',size=14)
-plt.ylabel('Total Loan Cost',size=14)
-plt.title('Total Loan Costs by Sex') 
 
-plt.show()
-#%%
+# Native Americans, African Americans and Hawaiians pays most loan costs.
+# Blacks highest IR, highest LC then why is closing costs high for them? 
 
-# Overcharged Race Plots 
+# What is joint?
 
-# Hypo: minorities are charged more than caucasians  
-
-sns.stripplot(data=overcharged_df,
-              x='derived_race', 
-              y='interest_rate',
-              palette='mako')
-plt.xlabel('Derived Race',size=14)
-plt.ylabel('Interest Rate',size=14)
-plt.title('Interest Rates by Race') 
-plt.xticks(rotation=45)
-plt.show()
-
-sns.stripplot(data=overcharged_df, 
-                x='derived_race',
-                y='total_loan_costs')
-plt.xlabel('Derived Race',size=14)
-plt.ylabel('Total Loan Cost',size=14)
-plt.title('Total Loan Costs by Race') 
-plt.xticks(rotation=45)
-plt.show()
-
-# Fix x-ticks for race plots. 
 
 #%%
 
@@ -235,8 +208,6 @@ plt.show()
 ###########################################
 
 print('\nGraphical Exploration: Overcharged DF...\n')
-
-overcharged_df=overcharged_df.dropna()
 
 #Top-level graphs
 print('\nOvercharged DF Top-level Graphs')
@@ -281,43 +252,67 @@ print('\nLender Credits Distribution')
 sns.histplot(data=overcharged_df, x='lender_credits', bins=50)
 plt.show()
 
-#regplot interest rate against total loan cost
-print('\nScatterplot with LR line, Interest Rate Against Total Loan Cost')
-g=sns.regplot(data=overcharged_df[combined_cond], x='total_loan_costs',
-                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot discount points vs lender credits 
-print('\nScatterplot with LR line, Discount Points Against Lender Credits')
-g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='discount_points', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot discount points vs interest rate 
-print('\nScatterplot with LR line, Interest Rate Against Discount Points')
-g=sns.regplot(data=overcharged_df, x='discount_points',
-                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot total loan costs vs lender credits 
-print('\nScatterplot with LR line, Total Loan Costs Against Lender Credits')
-g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='total_loan_costs', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
-#regplot interest rate vs lender credits 
-print('\nScatterplot with LR line, Interest Rates Against Lender Credits')
-g=sns.regplot(data=overcharged_df, x='lender_credits',
-                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
-g.lines[0].set_color("pink")
-plt.show()
-
 ##################################################
 
+#%%
+# Overcharged Gender Plots 
+
+# Hypo: is that single women are overcharged compared to single men. 
+
+sns.stripplot(data=overcharged_df,
+              x='derived_sex', 
+              y='interest_rate',
+              palette='mako')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Interest Rate',size=14)
+plt.title('Interest Rates by Sex') 
+plt.show()
+
+sns.stripplot(data=overcharged_df, 
+                x='derived_sex',
+                y='total_loan_costs')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Total Loan Cost',size=14)
+plt.title('Total Loan Costs by Sex')
+
+sns.barplot(data=overcharged_df, 
+                x='derived_sex',
+                y='discount_points')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Discount Points',size=14)
+plt.title('Discount Points by Sex', size=14)
+
+sns.barplot(data=overcharged_df, 
+                x='derived_sex',
+                y='lender_credits')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Lender Credits',size=14)
+plt.title('Lender Credits by Sex', size=14)
+
+# Overcharged Race Plots 
+
+# Hypo: minorities are charged more than caucasians  
+
+sns.stripplot(data=overcharged_df,
+              x='derived_race', 
+              y='interest_rate',
+              palette='mako')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Interest Rate',size=14)
+plt.title('Interest Rates by Race') 
+plt.xticks(rotation=45)
+plt.show()
+
+sns.stripplot(data=overcharged_df, 
+                x='derived_race',
+                y='total_loan_costs')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Total Loan Cost',size=14)
+plt.title('Total Loan Costs by Race') 
+plt.xticks(rotation=45)
+plt.show()
+
+# Fix x-ticks for race plots. 
 #%%
 
 #Graphs grouping by interactive terms: Interest Rate
@@ -469,27 +464,7 @@ plt.show()
 
 
 
-# %%
-# First glimpse at pricing and other
-# characteristics across borrower race and ethnicity groups
 
-# print(overcharged_df.groupby('derived_sex').describe())
-# print(overcharged_df.groupby('derived_race').describe())
-# got tto messy but shows that there are more men than women
-
-print(overcharged_df.groupby('derived_sex').mean())
-print(overcharged_df.groupby('derived_race').mean())
-# From the mean tables,
-# Single women paid lower loan costs compared to men and joint on average.
-# Married people pay less IR, while women pay higher IR. 
-# Men get more discount points (IR reduction)
-# Females get more lender points (closing reduction)
-
-
-# Native Americans, African Americans and Hawaiians pays most loan costs.
-# Blacks highest IR, highest LC then why is closing costs high for them? 
-
-# What is joint?
 
 ###########################################
 ## Graphical Exploration: Overcharged DF ##
