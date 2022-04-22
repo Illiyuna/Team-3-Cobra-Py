@@ -467,8 +467,103 @@ print(tukey_TLC)
 
 # Means for male & female are unequal. 
 
+# Interest Rates 
+model_IR= ols('interest_rate ~ C(derived_sex)',
+            data=overcharged_stats).fit()
+result_IR = sm.stats.anova_lm(model_IR, type=2)
+  
+# Print the result
+print(result_IR)
+
+tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_sex'], alpha=0.05)
+print(tukey_IR)
+
+# men and women don't neccessarily pay different IRs. 
+
+# Lender Credits
+model_LC= ols('lender_credits ~ C(derived_sex)',
+            data=overcharged_stats).fit()
+result_LC = sm.stats.anova_lm(model_LC, type=2)
+  
+# Print the result
+print(result_LC)
+
+tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_sex'], alpha=0.05)
+print(tukey_LC)
+
+# woman and males get unequal LC so thats why TLC is unequal 
+
+# Discount Points 
+model_DP= ols('discount_points ~ C(derived_sex)',
+            data=overcharged_stats).fit()
+result_DP = sm.stats.anova_lm(model_DP, type=2)
+  
+# Print the result
+print(result_DP)
+
+tukey_DP = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['derived_sex'], alpha=0.05)
+print(tukey_DP)
+
+# equal average DP so IR is same as well ? 
+
+#%%
+# One way Anova for Race: Dont really know how useful it is 
+
+# Total Loan Costs 
+model_TLC= ols('total_loan_costs ~ C(derived_race)',
+            data=overcharged_stats).fit()
+result_TLC = sm.stats.anova_lm(model_TLC, type=2)
+  
+# Print the result
+print(result_TLC)
+
+tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_race'], alpha=0.05)
+print(tukey_TLC)
+
+# Means for male & female are unequal. 
+
+# Interest Rates 
+model_IR= ols('interest_rate ~ C(derived_race)',
+            data=overcharged_stats).fit()
+result_IR = sm.stats.anova_lm(model_IR, type=2)
+  
+# Print the result
+print(result_IR)
+
+tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_race'], alpha=0.05)
+print(tukey_IR)
+
+# men and women don't neccessarily pay different IRs. 
+
+# Lender Credits
+model_LC= ols('lender_credits ~ C(derived_race)',
+            data=overcharged_stats).fit()
+result_LC = sm.stats.anova_lm(model_LC, type=2)
+  
+# Print the result
+print(result_LC)
+
+tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_race'], alpha=0.05)
+print(tukey_LC)
+
+# woman and males get unequal LC so thats why TLC is unequal 
+
+# Discount Points 
+model_DP= ols('discount_points ~ C(derived_race)',
+            data=overcharged_stats).fit()
+result_DP = sm.stats.anova_lm(model_DP, type=2)
+  
+# Print the result
+print(result_DP)
+
+tukey_DP = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['derived_race'], alpha=0.05)
+print(tukey_DP)
+
+# equal average DP so IR is same as well ? 
 #%%
 #Two Way Anova
+
+# Total Loan Coats 
 model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
 C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
@@ -477,4 +572,34 @@ result = sm.stats.anova_lm(model, type=2)
 # Print the result
 print(result)
 
-# %%
+# So all of them are significant 
+
+#%%
+# Interest Rate
+model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+C(derived_sex):C(derived_race)',
+            data=overcharged_stats).fit()
+result = sm.stats.anova_lm(model, type=2)
+  
+# Print the result
+print(result)
+
+#%%
+# Total Loan Coats 
+model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+C(derived_sex):C(derived_race)',
+            data=overcharged_stats).fit()
+result = sm.stats.anova_lm(model, type=2)
+  
+# Print the result
+print(result)
+
+#%%
+# Total Loan Coats 
+model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
+C(derived_sex):C(derived_race)',
+            data=overcharged_stats).fit()
+result = sm.stats.anova_lm(model, type=2)
+  
+# Print the result
+print(result)
