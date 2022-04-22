@@ -161,3 +161,9 @@ grouped.size()
 
 #Is there a statistically significant difference between the “pre-approval denied”
 # and “application denied” groups for Income, Race, Sex, and Lien Status?
+
+
+
+#                RACE & GENDER 
+
+#%%%
