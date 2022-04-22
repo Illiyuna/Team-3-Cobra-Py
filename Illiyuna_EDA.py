@@ -260,6 +260,92 @@ print(overcharged_df.groupby('derived_race').mean())
 
 # What is joint?
 
+###########################################
+## Graphical Exploration: Overcharged DF ##
+###########################################
+
+print('\nGraphical Exploration: Overcharged DF...\n')
+
+overcharged_df=overcharged_df.dropna()
+
+#Top-level graphs
+print('\nOvercharged DF Top-level Graphs')
+
+#barplot of race
+print('\nBar plot of Race')
+labs=['White', 'Race Not Available', 'Black or African American',
+     'Asian', 'Joint', '2 or more minority races',
+     'American Indian or Alaska Native',
+     'Native Hawaiian or Other Pacific Islander', 'Other']
+race=overcharged_df['derived_race'].value_counts()
+g=sns.barplot(x=race.index, y=race.values,
+              hue=race.index, hue_order=labs,
+              dodge=False)
+plt.xticks([])
+plt.show()
+
+#barplot of sex
+print('\nBar plot of Sex')
+sex=overcharged_df['derived_sex'].value_counts()
+g=sns.barplot(x=sex.index, y=sex.values)
+plt.show()
+
+#total loan cost hist
+print('\nTotal Loan Cost Distribution')
+sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', bins=30)
+plt.show()
+
+#interest rates hist
+print('\nInterest Rate Distribution')
+sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', bins=25)
+plt.xticks([])
+plt.show()
+
+# discount points hist
+print('\nDiscount Points Distribution')
+sns.histplot(data=overcharged_df, x='discount_points', bins=50)
+plt.show()
+
+# lender credits hist
+print('\nLender Credits Distribution')
+sns.histplot(data=overcharged_df, x='lender_credits', bins=50)
+plt.show()
+
+#regplot interest rate against total loan cost
+print('\nScatterplot with LR line, Interest Rate Against Total Loan Cost')
+g=sns.regplot(data=overcharged_df[combined_cond], x='total_loan_costs',
+                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot discount points vs lender credits 
+print('\nScatterplot with LR line, Discount Points Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='lender_credits',
+                y='discount_points', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot discount points vs interest rate 
+print('\nScatterplot with LR line, Interest Rate Against Discount Points')
+g=sns.regplot(data=overcharged_df, x='discount_points',
+                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot total loan costs vs lender credits 
+print('\nScatterplot with LR line, Total Loan Costs Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='lender_credits',
+                y='total_loan_costs', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
+#regplot interest rate vs lender credits 
+print('\nScatterplot with LR line, Interest Rates Against Lender Credits')
+g=sns.regplot(data=overcharged_df, x='lender_credits',
+                y='interest_rate', scatter_kws={'alpha':0.03}, color="gray")
+g.lines[0].set_color("pink")
+plt.show()
+
 # %%
 # SEX
 
@@ -315,4 +401,10 @@ g=sns.FacetGrid(overcharged_df, col="derived_race", hue="derived_race")
 g.map_dataframe(sns.histplot, x="lender_credits", bins=25)
 plt.show()
 
-# %%
+
+## Do men make more money??
+### What is the probability of getting a high cost loan based on your sex & race??
+
+
+
+# Income by sex and race 
