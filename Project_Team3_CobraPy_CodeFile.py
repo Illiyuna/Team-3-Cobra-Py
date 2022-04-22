@@ -371,7 +371,8 @@ print('\nDisplay Summary statistics for Initial DF...\n')
 ###################################################################################################################
 #%%
 
-# Overcharged subset
+#                                       Overcharged Subset
+
 print('\nDisplay Summary statistics for Overcharged DF...\n')
 
 overcharged_df=overcharged_df.dropna()
@@ -384,9 +385,6 @@ overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
 # Dropping "Sex Not Available" From Derived Sex
 overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
 overcharged_df = overcharged_df[overcharged_df.derived_arce != 'Race Not Available']
-
-
-#                                        RACE & GENDER 
 
 #%%
 # Overcharged subset
