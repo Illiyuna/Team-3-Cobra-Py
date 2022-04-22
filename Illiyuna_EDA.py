@@ -167,3 +167,77 @@ grouped.size()
 #                RACE & GENDER 
 
 #%%%
+
+# Overcharged subset
+print('\nDisplay Summary statistics for Overcharged DF...\n')
+
+overcharged_df=overcharged_df.dropna()
+overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
+# overcharged_df[loan_cond].describe()
+# overcharged_df[intr_cond].describe()
+# overcharged_df[intr_cond2].describe()
+# overcharged_df[combined_cond].describe()
+
+# Dropping "Sex Not Available" From Derived Sex
+overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
+
+#%%
+# Overcharged Gender Plots 
+
+# Hypo: is that single women are overcharged compared to single men. 
+
+sns.stripplot(data=overcharged_df,
+              x='derived_sex', 
+              y='interest_rate',
+              palette='mako')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Interest Rate',size=14)
+plt.title('Interest Rates by Sex') 
+plt.show()
+
+sns.stripplot(data=overcharged_df, 
+                x='derived_sex',
+                y='total_loan_costs')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Total Loan Cost',size=14)
+plt.title('Total Loan Costs by Sex') 
+
+plt.show()
+#%%
+
+# Overcharged Race Plots 
+
+# Hypo: minorities are charged more than caucasians  
+
+sns.stripplot(data=overcharged_df,
+              x='derived_race', 
+              y='interest_rate',
+              palette='mako')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Interest Rate',size=14)
+plt.title('Interest Rates by Race') 
+plt.xticks(rotation=45)
+plt.show()
+
+sns.stripplot(data=overcharged_df, 
+                x='derived_race',
+                y='total_loan_costs')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Total Loan Cost',size=14)
+plt.title('Total Loan Costs by Race') 
+plt.xticks(rotation=45)
+plt.show()
+
+# Fix x-ticks for race plots. 
+
+#%%
+
+# Correlation Matrix for Overcharged 
+
+corrMatrix = overcharged_df.corr()
+sns.heatmap(corrMatrix, annot=True)
+plt.show()
+
+# %%
+# First glimpse at pricing and other
+# characteristics across borrower race and ethnicity groups
