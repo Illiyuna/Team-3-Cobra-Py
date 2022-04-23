@@ -123,13 +123,13 @@ def make_scatter(data, x, y):
 
 ##################################################
 
-def make_hist_kde(data, x, bins):
+def make_hist_kde(data, x, bins, hue):
     #change line color 
     #source: https://github.com/mwaskom/seaborn/issues/2344
     
     #Initialize graph
-    ax1=sns.histplot(data=data, x=x, bins=bins, color="#8da0cb",
-                     kde=True, line_kws=dict(linewidth=4))
+    ax1=sns.histplot(data=data, x=x, bins=bins, color="#8da0cb", hue=hue,
+                     multiple="stack", kde=True, line_kws=dict(linewidth=4))
     #Change color of KDE line
     ax1.lines[0].set_color("#e78ac3")
     #Format and display
@@ -157,6 +157,29 @@ def create_vif_table(df, vars):
     display(vif_data)
     
     return None
+
+##################################################
+
+def create_count_df(df, col_name):
+    
+    #Get count of every level of variable
+    val_count=df[col_name].value_counts()
+    #Create DF of the counts
+    count_df=pd.DataFrame({"categorical_levels": val_count.index,
+                  "count": val_count.values})
+    #Convert level counts into percentages of total
+    #freq_df['freq']=round(freq_df['freq'].apply(lambda x: x/sum(freq_df['freq'])), 3)
+    
+    return count_df
+
+##################################################
+
+def create_freq_df(df, col_name):
+    
+    freq_df=create_count_df(df,col_name).rename(columns={'count':'freq'})
+    freq_df['freq']=round(freq_df['freq'].apply(lambda x: x/sum(freq_df['freq'])), 3)
+    
+    return freq_df
 
 ##################################################
 
@@ -1044,7 +1067,8 @@ print(tukey_DP2)
 #propval_df filters
 
 #Set cut off for value of property
-propval_cutoff=2000000
+propval_cutoff=3600000
+#3.6 mil would be 1sd cutoff for filter
 #Set up filter
 propval_cond=propval_df['property_value']<=propval_cutoff
 #filter for conditions
@@ -1063,23 +1087,91 @@ print('Proval DF head')
 display(filtered_popval.head().style.set_sticky(axis="index"))
 print('\nPropval Numerical Variables, IQR Ranges')
 display(filtered_popval.describe().style.set_sticky(axis="index"))
-#Need to create create df of categorical variables and their value_count frequencies
-#Then display as the categorical variable IQR range
-#Below are the value counts
+
+#COMMENTS
+# Median Family Income -- only 1, since just looking at DMV region
+#                      -- can drop
+
+#%%
+
+#Create create df for each categorical variables and their value_count frequencies
+
+#Dwelling Type
 print('\nDistribution of dwelling category')
-display(filtered_popval.derived_dwelling_category.value_counts())
+dwelling_type_freq=create_freq_df(filtered_popval, 'derived_dwelling_category')
+display(dwelling_type_freq)
+#Occupancy Type
 print('\nDistribution of occupancy type')
-display(filtered_popval.occupancy_type.value_counts())
+occupancy_type_freq=create_freq_df(filtered_popval, 'occupancy_type')
+display(occupancy_type_freq)
+#Construction Method
 print('\nDistribution of construction method')
-display(filtered_popval.construction_method.value_counts())
+construction_method_freq=create_freq_df(filtered_popval, 'construction_method')
+display(construction_method_freq)
+#Total units
 print('\nDistribution of total units')
-display(filtered_popval.total_units.value_counts())
+total_units_freq=create_freq_df(filtered_popval, 'total_units')
+display(total_units_freq)
+
+#COMMENTS
+#
+# Only Occupancy Type appears to have any kind of breakdown amongst the levels 
+
+#%%
 #Corrplot
 print('\nCorrelation Matrix of Propval Numerical Variables')
 display(round(filtered_popval.corr(), 3).style.set_sticky(axis="index"))
 
+corrMatrix_propval = filtered_popval.iloc[:, np.r_[0,6:12]].corr()
+sns.heatmap(corrMatrix_propval, annot=True)
+plt.show()
+
+#Property Value is correlated with:
+# -Tract perc of Regional Median Family Income (+)
+# - Tract minority population percentage (-)
+# - Owner occupied units (small +)
+# - Number of 1-4 family homes (small +)
+
+#Tract Population appears to be captured in
+# -Number of onwer occupied units (+)
+# -Number of 1-4 familt homes (+)
+
+#Tract Minority Population Percentage also connected to
+# -Number of Onwer occupied units (-)
+
+#Tract perc of Regional Median Famliy Income also connect to
+# -Number onwer occupied units (+)
+
+#Number Onwer Occupied Units also connected to
+# -Number of 1-4 family homes
+
+#Derived Assumptions
+#
+#1. Interest Rate and Tract Population propbably not important.
+#
+#2. Number of Occupied Units seems to be connected to the Tract perc
+#   of regional median income and the perc of minority population, 
+#   number of 1-4 family homes and Tract population. Therefore, it
+#   probably won't add much itself. Whatever effect it has will likely
+#   be captured in those variables.
+#
+#3. Number of 1-4 family homes can capture some of what population does
+#   and is otherwise not very correlated. It can probably be used as a
+#   stand in for the effects of population and contribute its own as well.
+#   So, a community with fewer apt buildings may have more exp homes.
+#
+#4. Tract Minority Population Percentage and Tract perc of Regional
+#   Median Family Income are highly correlated (-) with each other
+#   and Tract perc of Regional Median Family Income looks to capture
+#   more of Number of Owner Occupied Units, so may be the more important
+#   variable to keep.
+#
+#5. Best to use Tract perc of Regional Median Family Income and
+#   Number of 1-4 family homes as explanatory variables for
+#   Propety Value. VIF tests will be needed to check this.
+
 #pairplot
-#sns.pairplot(filtered_popval)
+#sns.pairplot(filtered_popval.iloc[:, np.r_[0,6:12]])
 
 ##################################################
 
@@ -1103,22 +1195,35 @@ print('\nDistributions of Community Factors')
 strg=16
 rice=36
 bins=strg
-print('\nProperty Value')
-make_hist_kde(filtered_popval, x='property_value', bins=bins)
-print('\nTract Population')
-make_hist_kde(filtered_popval, x='tract_population', bins=bins)
-print('\nPercentage of Tract Population that is in Minority Group')
-make_hist_kde(filtered_popval, x='tract_minority_population_percent', bins=bins)
-print('\nRegional Median Family Income')
-make_hist_kde(filtered_popval, x='ffiec_msa_md_median_family_income', bins=bins)
-print('\nTract Median Family Income as Percentage of Regional Median Family Income')
-make_hist_kde(filtered_popval, x='tract_to_msa_income_percentage', bins=bins)
-print('\nNumber of Owner Occupied Units')
-make_hist_kde(filtered_popval, x='tract_owner_occupied_units', bins=bins)
-print('\nNumber of 1-4 Family Homes')
-make_hist_kde(filtered_popval, x='tract_one_to_four_family_homes', bins=bins)
-print('\nMedian Age of Units')
-make_hist_kde(filtered_popval, x='tract_median_age_of_housing_units', bins=bins)
+
+#Top-Level
+print('\n---\nTop-Level\n---\n')
+for col in filtered_popval.iloc[:, np.r_[0,6:12]].columns:
+    print(f'\n{col}\n')
+    make_hist_kde(filtered_popval, x=col, bins=bins, hue=None)
+
+#Grouped by Occupancy Type
+print('\n---\nGrouped by Occupancy Type\n---\n')
+for col in filtered_popval.iloc[:, np.r_[0,6:12]].columns:
+    print(f'\n{col}\n')
+    make_hist_kde(filtered_popval, x=col, bins=bins, hue='occupancy_type')
+
+# print('\nProperty Value')
+# make_hist_kde(filtered_popval, x='property_value', bins=bins)
+# print('\nTract Population')
+# make_hist_kde(filtered_popval, x='tract_population', bins=bins)
+# print('\nPercentage of Tract Population that is in Minority Group')
+# make_hist_kde(filtered_popval, x='tract_minority_population_percent', bins=bins)
+# print('\nRegional Median Family Income')
+# make_hist_kde(filtered_popval, x='ffiec_msa_md_median_family_income', bins=bins)
+# print('\nTract Median Family Income as Percentage of Regional Median Family Income')
+# make_hist_kde(filtered_popval, x='tract_to_msa_income_percentage', bins=bins)
+# print('\nNumber of Owner Occupied Units')
+# make_hist_kde(filtered_popval, x='tract_owner_occupied_units', bins=bins)
+# print('\nNumber of 1-4 Family Homes')
+# make_hist_kde(filtered_popval, x='tract_one_to_four_family_homes', bins=bins)
+# print('\nMedian Age of Units')
+# make_hist_kde(filtered_popval, x='tract_median_age_of_housing_units', bins=bins)
 
 #%%
 
@@ -1147,16 +1252,15 @@ plt.show()
 #%%
 #Additional variable comparison
 print('\nScatterplots of Correlated Community Factors Against One Another...\n')
+sns.pairplot(filtered_popval.iloc[:, np.r_[6,7,9:12]], plot_kws={'alpha': 0.1})
+plt.show()
 
 ##################################################
 
-print('\nFreq plots for cat vars...\n')
+# print('\nFreq plots for cat vars...\n')
 
-##################################################
-
-#%%
-
-print('\nANOVA and ChiSqr Tests...\n')
+#Only occupancy type had some kind of distribution
+#was captured in Top-Level stacked histograms by occupancy_type
 
 ##################################################
 
@@ -1210,7 +1314,7 @@ print('\nModel For Suspected Important Factors, With VIF less than 10\n')
 #+ tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units'
 
 #Build model
-model_test=ols(formula='property_value ~ C(occupancy_type) + C(total_units) + tract_minority_population_percent + tract_to_msa_income_percentage + tract_one_to_four_family_homes', data=filtered_popval)
+model_test=ols(formula='property_value ~ C(occupancy_type) + tract_minority_population_percent + tract_to_msa_income_percentage + tract_one_to_four_family_homes', data=filtered_popval)
 model_test_fit=model_test.fit()
 print(model_test_fit.summary())
 
@@ -1219,6 +1323,12 @@ print(model_test_fit.summary())
 print('\nModel For all Factors that had a low p-value in the All-Factors-Model\n')
 #+ C(total_units)
 model_test=ols(formula='property_value ~ C(occupancy_type) + tract_minority_population_percent + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=filtered_popval)
+model_test_fit=model_test.fit()
+print(model_test_fit.summary())
+
+#%%
+#Model No cat vars, just low-enough-VIF numeric cars
+model_test=ols(formula='property_value ~ tract_minority_population_percent + tract_to_msa_income_percentage + tract_one_to_four_family_homes', data=filtered_popval)
 model_test_fit=model_test.fit()
 print(model_test_fit.summary())
 
