@@ -368,6 +368,36 @@ print('\nDisplay Summary statistics for Initial DF...\n')
 
 # chnage numbers to actual loan names 
 
+#%%
+# Summary of Loan Amount By Loan Type
+
+result = init_df.groupby('loan_type').agg({'loan_amount': ['mean', 'min', 'max']})
+  
+print("Mean, Min, and max values of Loan Amounts By Type")
+print(result)
+
+# chnage numbers to actual loan names 
+
+#%%
+# Correlation Matrix for Initial 
+
+corrMatrix = init_df.corr()
+sns.heatmap(corrMatrix, annot=True)
+plt.show()
+
+#%%
+# Average values of loans for 2020 by Loan Type.
+
+init_df.groupby(['loan_type'], as_index=False).mean().groupby('loan_type')['loan_amount'].mean()
+
+
+# Average values of loans by construction method.
+init_df.groupby(['construction_method'], as_index=False).mean().groupby('construction_method')['loan_amount'].mean()
+
+
+# Average values of loans  by occupancy type.
+init_df.groupby(['occupancy_type'], as_index=False).mean().groupby('occupancy_type')['loan_amount'].mean()
+
 ###################################################################################################################
 #%%
 
