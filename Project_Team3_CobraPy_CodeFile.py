@@ -366,7 +366,6 @@ print('\nDisplay Summary statistics for Initial DF...\n')
 # Check missing variables 
 # init_df.isnull().sum() / init_df.shape[0] * 100
 
-# chnage numbers to actual loan names 
 
 #%%
 # Summary of Loan Amount By Loan Type
@@ -406,7 +405,8 @@ init_df.groupby(['occupancy_type'], as_index=False).mean().groupby('occupancy_ty
 print('\nDisplay Summary statistics for Overcharged DF...\n')
 
 overcharged_df=overcharged_df.dropna()
-overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
+overcharged_df.isnull().sum() 
+overcharged_df.shape[0] * 100
 # overcharged_df[loan_cond].describe()
 # overcharged_df[intr_cond].describe()
 # overcharged_df[intr_cond2].describe()
@@ -414,22 +414,7 @@ overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
 
 # Dropping "Sex Not Available" From Derived Sex
 overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
-overcharged_df = overcharged_df[overcharged_df.derived_arce != 'Race Not Available']
-
-#%%
-# Overcharged subset
-print('\nDisplay Summary statistics for Overcharged DF...\n')
-
-overcharged_df=overcharged_df.dropna()
-overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
-# overcharged_df[loan_cond].describe()
-# overcharged_df[intr_cond].describe()
-# overcharged_df[intr_cond2].describe()
-# overcharged_df[combined_cond].describe()
-
-# Dropping "Sex Not Available" From Derived Sex
-overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
-overcharged_df = overcharged_df[overcharged_df.derived_race!= 'Race Not Available']
+overcharged_df = overcharged_df[overcharged_df.derived_race != 'Race Not Available']
 
 # %%
 # First glimpse of variable characteristics grouped by sex or race
@@ -531,6 +516,7 @@ sns.stripplot(data=overcharged_df,
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Total Loan Cost',size=14)
 plt.title('Total Loan Costs by Sex')
+plt.show()
 
 sns.barplot(data=overcharged_df, 
                 x='derived_sex',
@@ -538,6 +524,7 @@ sns.barplot(data=overcharged_df,
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Discount Points',size=14)
 plt.title('Discount Points by Sex', size=14)
+plt.show()
 
 sns.barplot(data=overcharged_df, 
                 x='derived_sex',
@@ -545,7 +532,8 @@ sns.barplot(data=overcharged_df,
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Lender Credits',size=14)
 plt.title('Lender Credits by Sex', size=14)
-
+plt.show()
+#%%
 # Overcharged Race Plots 
 
 # Hypo: minorities are charged more than caucasians  
@@ -571,6 +559,23 @@ plt.show()
 
 # Fix x-ticks for race plots. 
 
+sns.barplot(data=overcharged_df, 
+                x='derived_race',
+                y='discount_points')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Discount Points',size=14)
+plt.title('Discount Points by Sex', size=14)
+plt.xticks(rotation=45)
+plt.show()
+
+sns.barplot(data=overcharged_df, 
+                x='derived_race',
+                y='lender_credits')
+plt.xlabel('Derived Sex',size=14)
+plt.ylabel('Lender Credits',size=14)
+plt.title('Lender Credits by Sex', size=14)
+plt.xticks(rotation=45)
+plt.show()
 #%%
 
 #violin plots for comparisons
