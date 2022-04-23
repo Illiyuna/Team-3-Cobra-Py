@@ -870,14 +870,19 @@ print(result_TLC)
 tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_TLC)
 
-# Females pay on average $1,832 MORE than "joint" borrowers.
+# Females pay on average $1,832 LESS than "joint" borrowers.
 # No statsitical significance for Female vs Male
-# Males pay on average $1,033 MORE than "joint" borrowers.  
+# Males pay on average $1,033 LESS than "joint" borrowers.  
 
 #%%
 # Boxplot for Total Loan Costs
 
+#overcharged_stats.boxplot(column = 'total_loan_costs', by = 'derived_sex', color = [1:3])
 
+sns.boxplot(data = overcharged_stats, y = 'total_loan_costs', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+plt.title('Boxplot. Total Loan Costs vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Total Loan Costs ($)')
 
 
 #%%
@@ -892,9 +897,17 @@ print(result_IR)
 tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_IR)
 
-# Single females pay 13.8% LESS on interest rates than couples (joint).
-# Single females pay 8.6% LESS on interest rates than men.
+# Females pay 0.138 MORE points on their interest rate than joint borrowers.
+# Females pay 0.86 MORE points on interest rates than Males.
 # No statistical significant diff between joint and males
+
+#%%
+#Boxplot interet rates vs derived sex
+sns.boxplot(data = overcharged_stats, y = 'interest_rate', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+plt.title('Boxplot. Interest Rates vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Interest rates (%)')
+
 
 #%%
 # Lender Credits
@@ -908,7 +921,14 @@ print(result_LC)
 tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_LC)
 
-# All groups are statistically significantly different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender. 
+# All groups are statistically different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender. 
+
+#%%
+#Boxplot Lender credits vs derived sex
+sns.boxplot(data = overcharged_stats, y = 'lender_credits', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+plt.title('Boxplot. Lender Credits vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Lender Credits ($)')
 
 #%%
 # Discount Points 
@@ -925,6 +945,13 @@ print(tukey_DP)
 # All groups are statistically significantly different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender.
 
 #%%
+#Boxplot Discount Points vs derived sex
+sns.boxplot(data = overcharged_stats, y = 'discount_points', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+plt.title('Boxplot. Discount Points vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Discount Points ($)')
+
+#%%
 # One way Anova for Race.
 
 # Total Loan Costs 
@@ -938,7 +965,14 @@ print(result_TLC)
 tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_TLC)
 
-# Total loan costs are, on average, the same for every group. No statistical significantly differences found. 
+# Total loan costs are, on average, the same for every group. No statistical significantly differences found.
+
+#%%
+#Boxplot Total Loan Costs vs Derived Race
+sns.boxplot(data = overcharged_stats, y = 'total_loan_costs', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+plt.title('Boxplot. Total Loan Cost vs \n Derived Race (w/o Outliers)')
+plt.xlabel('Race')
+plt.ylabel('Total Loan Costs ($)') 
 
 #%%
 # Interest Rates vs Race
@@ -952,8 +986,17 @@ print(result_IR)
 tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_IR)
 
-# AfrAms pay, on average 22.2% LESS in Interest Rates than "joint" borrowers.
-# AfrAms. pay, on average, 19.2% LESS in interest rates than their white counterparts.
+# AfrAms pay, on average 22.2% MORE in Interest Rates than "joint" borrowers.
+# AfrAms. pay, on average, 19.2% MORE in interest rates than their white counterparts.
+
+#%%
+#Boxplot Interest rates vs Derived Race
+g1 = sns.boxplot(data = overcharged_stats, y = 'interest_rate', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+g1.set(xticklabels=[])
+g1.set(title ='Boxplot. Interest Rate vs Derived Race (w/o Outliers)')
+plt.legend(overcharged_stats['derived_race'].unique())
+plt.xlabel('Race')
+plt.ylabel('Interest rate (%)') 
 
 #%%
 # Lender Credits vs Race
