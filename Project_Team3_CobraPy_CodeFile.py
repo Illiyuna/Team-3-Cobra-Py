@@ -834,12 +834,12 @@ from scipy.stats import f_oneway
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 #%%
-# One way Anova for Sex 
+# One way Anova Total loan cost vs Sex
 
 # Total Loan Costs 
 model_TLC= ols('total_loan_costs ~ C(derived_sex)',
             data=overcharged_stats).fit()
-result_TLC = sm.stats.anova_lm(model_TLC, type=2)
+result_TLC = sm.stats.anova_lm(model_TLC, type=1)
   
 # Print the result
 print(result_TLC)
@@ -847,12 +847,21 @@ print(result_TLC)
 tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_TLC)
 
-# Means for male & female are unequal. 
+# Females pay on average $1,832 MORE than "joint" borrowers.
+# No statsitical significance for Female vs Male
+# Males pay on average $1,033 MORE than "joint" borrowers.  
 
+#%%
+# Boxplot for Total Loan Costs
+
+
+
+
+#%%
 # Interest Rates 
 model_IR= ols('interest_rate ~ C(derived_sex)',
             data=overcharged_stats).fit()
-result_IR = sm.stats.anova_lm(model_IR, type=2)
+result_IR = sm.stats.anova_lm(model_IR, type=1)
   
 # Print the result
 print(result_IR)
@@ -860,12 +869,15 @@ print(result_IR)
 tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_IR)
 
-# men and women don't neccessarily pay different IRs. 
+# Single females pay 13.8% LESS on interest rates than couples (joint).
+# Single females pay 8.6% LESS on interest rates than men.
+# No statistical significant diff between joint and males
 
+#%%
 # Lender Credits
 model_LC= ols('lender_credits ~ C(derived_sex)',
             data=overcharged_stats).fit()
-result_LC = sm.stats.anova_lm(model_LC, type=2)
+result_LC = sm.stats.anova_lm(model_LC, type=1)
   
 # Print the result
 print(result_LC)
@@ -873,12 +885,13 @@ print(result_LC)
 tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_LC)
 
-# woman and males get unequal LC so thats why TLC is unequal 
+# All groups are statistically significantly different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender. 
 
+#%%
 # Discount Points 
 model_DP= ols('discount_points ~ C(derived_sex)',
             data=overcharged_stats).fit()
-result_DP = sm.stats.anova_lm(model_DP, type=2)
+result_DP = sm.stats.anova_lm(model_DP, type=1)
   
 # Print the result
 print(result_DP)
@@ -886,15 +899,15 @@ print(result_DP)
 tukey_DP = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['derived_sex'], alpha=0.05)
 print(tukey_DP)
 
-# equal average DP so IR is same as well ? 
+# All groups are statistically significantly different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender.
 
 #%%
-# One way Anova for Race: Dont really know how useful it is 
+# One way Anova for Race.
 
 # Total Loan Costs 
 model_TLC= ols('total_loan_costs ~ C(derived_race)',
             data=overcharged_stats).fit()
-result_TLC = sm.stats.anova_lm(model_TLC, type=2)
+result_TLC = sm.stats.anova_lm(model_TLC, type=1)
   
 # Print the result
 print(result_TLC)
@@ -902,12 +915,13 @@ print(result_TLC)
 tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_TLC)
 
-# Means for male & female are unequal. 
+# Total loan costs are, on average, the same for every group. No statistical significantly differences found. 
 
-# Interest Rates 
+#%%
+# Interest Rates vs Race
 model_IR= ols('interest_rate ~ C(derived_race)',
             data=overcharged_stats).fit()
-result_IR = sm.stats.anova_lm(model_IR, type=2)
+result_IR = sm.stats.anova_lm(model_IR, type=1)
   
 # Print the result
 print(result_IR)
@@ -915,12 +929,14 @@ print(result_IR)
 tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_IR)
 
-# men and women don't neccessarily pay different IRs. 
+# AfrAms pay, on average 22.2% LESS in Interest Rates than "joint" borrowers.
+# AfrAms. pay, on average, 19.2% LESS in interest rates than their white counterparts.
 
-# Lender Credits
+#%%
+# Lender Credits vs Race
 model_LC= ols('lender_credits ~ C(derived_race)',
             data=overcharged_stats).fit()
-result_LC = sm.stats.anova_lm(model_LC, type=2)
+result_LC = sm.stats.anova_lm(model_LC, type=1)
   
 # Print the result
 print(result_LC)
@@ -928,12 +944,13 @@ print(result_LC)
 tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_LC)
 
-# woman and males get unequal LC so thats why TLC is unequal 
+#  No statistical significance found amon the Race groups for lender credits.
 
-# Discount Points 
+#%%
+# Discount Points vs Race
 model_DP= ols('discount_points ~ C(derived_race)',
             data=overcharged_stats).fit()
-result_DP = sm.stats.anova_lm(model_DP, type=2)
+result_DP = sm.stats.anova_lm(model_DP, type=1)
   
 # Print the result
 print(result_DP)
@@ -941,20 +958,27 @@ print(result_DP)
 tukey_DP = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_DP)
 
-# equal average DP so IR is same as well ? 
+# #  No statistical significance found amon the Race groups for discount points.
+ 
 #%%
-#Two Way Anova
+### TWO-WAY ANOVAs
 
 # Total Loan Coats 
 model = ols('total_loan_costs ~ C(derived_sex) + C(derived_race) +\
 C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
-  
-# Print the result
 print(result)
 
-# So all of them are significant 
+overcharged_stats['combination'] = overcharged_stats.derived_sex + overcharged_stats.derived_race
+
+tukey_TLC2 = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['combination'] , alpha=0.05)
+
+print(tukey_TLC2)
+# Asian females, when taking a loan, pay on average $3,653 MORE than White "joint" borrowers.
+# White females, when taking a loan, pay on average $3,653 MORE than White "joint" borrowers.
+# No other statsitically significant difference was found in the interactions.
+
 
 #%%
 # Interest Rate
@@ -963,10 +987,18 @@ C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
   
-# Print the result
 print(result)
 
-# all of them are significant 
+#overcharged_stats['combination'] = overcharged_stats.derived_sex + overcharged_stats.derived_race
+
+tukey_IR2 = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['combination'] , alpha=0.05)
+
+print(tukey_IR2)
+
+# Female AfrAms pay on average 0.263 LESS on their interest rates than their White "joint" counterparts.
+# Female AfrAms pay on average 0.221 LESS on their interest rates than their Male "joint" counterparts.
+# White "joint" pay on average 0.185 MORE than their interest rates than their Male AfrAms counterparts.
+ 
 
 #%%
 # Lender Credit 
@@ -975,10 +1007,14 @@ C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
   
-# Print the result
 print(result)
 
-# sex or race doesnt affect lender credits 
+#overcharged_stats['combination'] = overcharged_stats.derived_sex + overcharged_stats.derived_race
+
+tukey_LC2 = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['combination'] , alpha=0.05)
+
+print(tukey_LC2)
+# sex or race doesnt affect lender credits.
 
 #%%
 # Discount Points
@@ -987,10 +1023,14 @@ C(derived_sex):C(derived_race)',
             data=overcharged_stats).fit()
 result = sm.stats.anova_lm(model, type=2)
   
-# Print the result
 print(result)
 
-# all of them are significant 
+tukey_DP2 = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['combination'] , alpha=0.05)
+
+print(tukey_DP2)
+# Asian females agree on average to an additional $2,264 on Discount points than their White "joint" counterparts.
+# AfrAm females agree on average to an additional $1,267 on Discount points than their White "joint" counterparts.
+# White females agree on average to an additional $1,214 on Discount points than their White "joint" counterparts.
 
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
