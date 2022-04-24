@@ -1351,6 +1351,13 @@ model_vif_fit=model_vif.fit()
 print(model_vif_fit.summary())
 
 #%%
+#Model with all numerical values chosen
+print('\nModel with all numerical variables chosen\n')
+model_test=ols(formula='property_value ~ tract_population + tract_minority_population_percent + ffiec_msa_md_median_family_income + tract_to_msa_income_percentage + tract_owner_occupied_units + tract_one_to_four_family_homes + tract_median_age_of_housing_units', data=filtered_popval)
+model_test_fit=model_test.fit()
+print(model_test_fit.summary())
+
+#%%
 #Suspected important values
 print('\nModel For Suspected Important Factors, With VIF less than 10\n')
 #derived_dwelling_category + occupancy_type + construction_method + total_units + interest_rate
@@ -1371,6 +1378,7 @@ print(model_test_fit.summary())
 
 #%%
 #Model No cat vars, just low-enough-VIF numeric cars
+print('\nModel of Only Lower VIF Factors\n')
 model_test=ols(formula='property_value ~ tract_minority_population_percent + tract_to_msa_income_percentage + tract_one_to_four_family_homes', data=filtered_popval)
 model_test_fit=model_test.fit()
 print(model_test_fit.summary())
@@ -1432,7 +1440,5 @@ print(model_test_fit.summary())
 # plt.show()
 
 ##################################################
-
-
 
 # %%
