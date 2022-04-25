@@ -108,7 +108,7 @@ def clean_int_rate(val):
 
     #Note:
     # Currently, Exempt is being turned into int_rate of 0
-    # Is this desited? Other conversion better?
+    # Is this desired? Other conversion better?
 
 ##################################################
 
@@ -203,7 +203,7 @@ dc_df=pd.read_csv('data/dc_df.csv')
 
 #%%
 
-#show number of obs and display full dc_df head
+# Show number of obs and display full dc_df head
 print('\nShow head and number of observarions in FULL DC data set...\n')
 print(f'Dc observations: {len(dc_df)}')
 display(dc_df.head().style.set_sticky(axis="index"))
@@ -326,23 +326,6 @@ overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
 overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
 overcharged_df = overcharged_df[overcharged_df.derived_race != 'Race Not Available']
 
-#*********************************#
-##### DUPLICATE NEEDS DELETED #####
-#*********************************#
-
-# # Overcharged subset
-# print('\nDisplay Summary statistics for Overcharged DF...\n')
-
-# overcharged_df=overcharged_df.dropna()
-# overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
-# # overcharged_df[loan_cond].describe()
-# # overcharged_df[intr_cond].describe()
-# # overcharged_df[intr_cond2].describe()
-# # overcharged_df[combined_cond].describe()
-
-# # Dropping "Sex Not Available" From Derived Sex
-# overcharged_df = overcharged_df[overcharged_df.derived_sex != 'Sex Not Available']
-# overcharged_df = overcharged_df[overcharged_df.derived_race!= 'Race Not Available']
 
 # %%
 # First glimpse of variable characteristics grouped by sex or race
