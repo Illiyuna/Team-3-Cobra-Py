@@ -428,7 +428,7 @@ sns.barplot(data=overcharged_df,
             y='loan_amount')
 plt.xlabel('Type of Loan',size=14)
 plt.ylabel('Average Loan Amount',size=14)
-plt.title('Average Loan Amount & Type by Property Type') 
+plt.title('Average Loan Amount & Loan Type In Washington,DC') 
 x_var= ['Conventional', 
         'FHA Insured', 
         'VA Insured',
