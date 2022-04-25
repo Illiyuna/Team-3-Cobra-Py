@@ -370,17 +370,23 @@ labs=['White','Race Not Available', 'Black or African American',
      'American Indian or Alaska Native',
      'Native Hawaiian or Other Pacific Islander', 'Other']
 race=overcharged_df['derived_race'].value_counts()
-g=sns.barplot(x=race.index, y=race.values,
+sns.barplot(x=race.index, y=race.values,
               hue=race.index, hue_order=labs,
               dodge=False)
-plt.title('Barplot of Race')
+
 plt.xticks([])
+plt.xlabel ('Race of Applicant', size=10)
+plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.title('Barplot of Race', size=14)
 plt.show()
 
 #barplot of sex
 print('\nBar plot of Sex')
 sex=overcharged_df['derived_sex'].value_counts()
-g=sns.barplot(x=sex.index, y=sex.values)
+sns.barplot(x=sex.index, y=sex.values)
+plt.xlabel ('Sex of Applicant', size=12)
+plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.title('Barplot of Sex', size=14)
 plt.show()
 
 #total loan cost hist
