@@ -20,6 +20,11 @@ import os
 from statsmodels.formula.api import ols
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
+import scipy.stats as stats
+import statsmodels.api as sm
+from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
 
 
 ##################################################
@@ -681,12 +686,6 @@ plt.show()
 ####################################################### 
 
 overcharged_stats =overcharged_df.copy()
-## Anova Tests for Sex
-import scipy.stats as stats
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
-from scipy.stats import f_oneway
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 #%%
 # One way Anova Total loan cost vs Sex
