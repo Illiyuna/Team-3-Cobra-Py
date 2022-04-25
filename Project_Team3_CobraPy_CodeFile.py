@@ -428,7 +428,7 @@ sns.barplot(data=overcharged_df,
             y='loan_amount')
 plt.xlabel('Type of Loan',size=14)
 plt.ylabel('Average Loan Amount',size=14)
-plt.title('Average Loan Amount & Loan Type In Washington,DC') 
+plt.title('Average Loan Amount & Loan Type In Washington, DC') 
 x_var= ['Conventional', 
         'FHA Insured', 
         'VA Insured',
@@ -445,8 +445,7 @@ plt.show()
 
 sns.stripplot(data=overcharged_df,
               x='derived_sex', 
-              y='interest_rate',
-              palette='mako')
+              y='interest_rate')
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Interest Rate',size=14)
 plt.title('Interest Rates by Sex') 
@@ -458,6 +457,7 @@ sns.stripplot(data=overcharged_df,
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Total Loan Cost',size=14)
 plt.title('Total Loan Costs by Sex')
+plt.show()
 
 sns.barplot(data=overcharged_df, 
                 x='derived_sex',
@@ -465,6 +465,7 @@ sns.barplot(data=overcharged_df,
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Discount Points',size=14)
 plt.title('Discount Points by Sex', size=14)
+plt.show()
 
 sns.barplot(data=overcharged_df, 
                 x='derived_sex',
@@ -472,31 +473,65 @@ sns.barplot(data=overcharged_df,
 plt.xlabel('Derived Sex',size=14)
 plt.ylabel('Lender Credits',size=14)
 plt.title('Lender Credits by Sex', size=14)
+plt.show()
 
+#%%
 # Overcharged Race Plots 
 
 # Hypo: minorities are charged more than caucasians  
 
+# Interest Rate By Race
+labs=['White','Race Not Available', 'Black or African American',
+     'Asian', 'Joint', '2 or more minority races',
+     'American Indian or Alaska Native',
+     'Native Hawaiian or Other Pacific Islander', 'Other']
+
 sns.stripplot(data=overcharged_df,
               x='derived_race', 
-              y='interest_rate',
-              palette='mako')
+              y='interest_rate')
 plt.xlabel('Derived Race',size=14)
 plt.ylabel('Interest Rate',size=14)
 plt.title('Interest Rates by Race') 
-plt.xticks(rotation=45)
+plt.xticks([])
+plt.legend(labs,bbox_to_anchor=(1,1), loc='upper left')
 plt.show()
 
+# Total Loan Cost by Race
 sns.stripplot(data=overcharged_df, 
                 x='derived_race',
                 y='total_loan_costs')
 plt.xlabel('Derived Race',size=14)
 plt.ylabel('Total Loan Cost',size=14)
 plt.title('Total Loan Costs by Race') 
-plt.xticks(rotation=45)
+plt.xticks([])
+plt.legend(labs,bbox_to_anchor=(1,1), loc='upper left')
 plt.show()
 
-# Fix x-ticks for race plots. 
+#%%
+
+# Discount by Race
+sns.barplot(data=overcharged_df, 
+                x='derived_race',
+                y='discount_points')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Discount Points',size=14)
+plt.title('Discount Points by Race', size=14)
+plt.xticks(rotation=90)
+# plt.legend(bbox_to_anchor=(1,1), loc='upper left')
+plt.show()
+
+# Lender Credits by Race 
+sns.barplot(data=overcharged_df, 
+                x='derived_race',
+                y='lender_credits')
+plt.xlabel('Derived Race',size=14)
+plt.ylabel('Lender Credits',size=14)
+plt.title('Lender Credits by Race', size=14)
+plt.xticks(rotation=90)
+# plt.legend(bbox_to_anchor=(1,1), loc='upper left')
+plt.show()
+
+
 
 #%%
 
