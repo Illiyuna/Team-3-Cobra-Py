@@ -392,22 +392,48 @@ plt.show()
 #total loan cost hist
 print('\nTotal Loan Cost Distribution')
 sns.histplot(data=overcharged_df[loan_cond], x='total_loan_costs', bins=30)
+plt.xlabel ('Total Loan Cost ', size=12)
+plt.ylabel('Count', size=12)
+plt.title('Distribution of Total Loan Cost', size=14)
 plt.show()
 
 #interest rates hist
 print('\nInterest Rate Distribution')
 sns.histplot(data=overcharged_df[intr_cond], x='interest_rate', bins=25)
-plt.xticks([])
+plt.xlabel ('Interest Rate ', size=12)
+plt.ylabel('Count', size=12)
+plt.title('Distribution of Interest Rate', size=14)
 plt.show()
+
 
 # discount points hist
 print('\nDiscount Points Distribution')
 sns.histplot(data=overcharged_df, x='discount_points', bins=50)
+plt.xlabel ('Discount points', size=12)
+plt.ylabel('Count', size=12)
+plt.title('Distribution of Discount Points', size=14)
 plt.show()
 
 # lender credits hist
 print('\nLender Credits Distribution')
-sns.histplot(data=overcharged_df, x='lender_credits', bins=50)
+sns.histplot(data=overcharged_df, x='lender_credits', bins=100)
+plt.xlabel ('Lender Credits', size=12)
+plt.ylabel('Count', size=12)
+plt.title('Distribution of Lender Credits', size=14)
+plt.show()
+
+# Loan Type By Loan Amount in DC 
+sns.barplot(data=overcharged_df, 
+            x='loan_type', 
+            y='loan_amount')
+plt.xlabel('Type of Loan',size=14)
+plt.ylabel('Average Loan Amount',size=14)
+plt.title('Average Loan Amount & Type by Property Type') 
+x_var= ['Conventional', 
+        'FHA Insured', 
+        'VA Insured',
+        'RHS or FSA Insured']
+plt.xticks([0,1,2,3], x_var, rotation=20)        
 plt.show()
 
 ##################################################
