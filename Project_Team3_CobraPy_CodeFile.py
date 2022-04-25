@@ -6,6 +6,7 @@
 
 #from cgi import test
 #from operator import index
+from turtle import color
 import pandas as pd
 import numpy as np
 from IPython.display import display
@@ -117,42 +118,66 @@ def clean_int_rate(val):
 
 ##################################################
 
-def make_scatter(data, x, y):
+def make_scatter(data, x, y, xlab, ylab, title):
+    
+    plt.figure(facecolor="white")
     ax1=sns.regplot(data=data, x=x, y=y, color="#b3b3b3", scatter_kws={'alpha':0.03})
     ax1.lines[0].set_color("#e5c494")
+    ax1.set_xlabel(xlab)
+    ax1.set_ylabel(ylab)
     plt.ticklabel_format(style='plain')
     plt.xticks(rotation=45)
+    #plt.title("Property Value Against Community Factors")
+    #plt.title("\n\n\n\n\n")
+    plt.title(title)
     plt.show()
     
     return None
 
 ##################################################
 
-def make_hist_kde(data, x, bins, hue):
+def make_hist_kde(data, x, bins, hue, replacements):
     #change line color 
     #source: https://github.com/mwaskom/seaborn/issues/2344
+    
+    plt.figure(facecolor="white")
     
     #Initialize graph
     ax1=sns.histplot(data=data, x=x, bins=bins, color="#8da0cb", hue=hue,
                      multiple="stack", kde=True, line_kws=dict(linewidth=4))
     #Change color of KDE line
     ax1.lines[0].set_color("#e78ac3")
+    
+    #Rename Label
+    xlabel = ax1.get_xlabel()
+    if xlabel in replacements.keys():
+        ax1.set_xlabel(replacements[xlabel])
+        title=f"Distribution of {replacements[xlabel]}"
+    
     #Format and display
     plt.ticklabel_format(style='plain')
     plt.xticks(rotation=45)
+    plt.title(title)
     plt.show()
 
     return None
 
 ##################################################
 
-def create_vif_table(df, vars):
+def create_vif_table(df, vars, replacements):
 
     vif_filter = df.iloc[:, np.r_[vars]]
-  
+    
+    #for i,feature in enumerate(vif_filter):
+    #    if feature in replacements.keys():
+    #        vif_filter[i]=replacements[feature]
+    
     # VIF dataframe
     vif_data = pd.DataFrame()
-    vif_data["feature"] = vif_filter.columns
+    vif_data["Feature"] = vif_filter.columns
+    
+    
+    vif_data["Feature"]=vif_data["Feature"].apply(lambda x: replacements[x])
     
     # calculating VIF for each feature
     vif_data["VIF"] = [variance_inflation_factor(vif_filter.values, i)
@@ -1002,11 +1027,25 @@ display(total_units_freq)
 
 #%%
 #Corrplot
-print('\nCorrelation Matrix of Propval Numerical Variables')
+print('\nCorrelation Matrix of Property Value and Community Factors')
 display(round(filtered_popval.corr(), 3).style.set_sticky(axis="index"))
 
+var_names=["Propety Value", "Population", "Pop Minority  %",
+           "Reg Median Income (MFI)", "Community % of MFI",
+           "Num Owner Occupied", "Num Family Homes"]
+
 corrMatrix_propval = filtered_popval.iloc[:, np.r_[0,6:12]].corr()
-sns.heatmap(corrMatrix_propval, annot=True)
+#plt.figure(facecolor="white")
+g=sns.heatmap(corrMatrix_propval, annot=True)#,
+              #color="#cacaca")
+              #cbar_kws={"fc":"#cacaca"})
+g.set_xticklabels(var_names)#, color="#cacaca")
+g.set_yticklabels(var_names)#, color="#cacaca")
+#sns.set(rc={'axes.facecolor':'#8da0cb', 'figure.facecolor':'#8da0cb'})
+#g.collections[0].colorbar.set_label(color="#cacaca")#"Hello")
+
+plt.title("\nCORRELATION MATRIX: Property Value and Community Factors\n\n")#,
+          #color="#cacaca")
 plt.show()
 
 #Property Value is correlated with:
@@ -1079,17 +1118,25 @@ strg=16
 rice=36
 bins=strg
 
+replacements = {'property_value':"Property Value",
+                'tract_population':"Population",
+                'tract_minority_population_percent':"Pop Minority %",
+                'tract_to_msa_income_percentage':"Community % of MFI",
+                'tract_owner_occupied_units':"Num Owner Occupied",
+                'tract_one_to_four_family_homes':"Num Family Homes",
+                'ffiec_msa_md_median_family_income':"Reg Median Income (MFI)"}
+
 #Top-Level
 print('\n---\nTop-Level\n---\n')
 for col in filtered_popval.iloc[:, np.r_[0,6:12]].columns:
     print(f'\n{col}\n')
-    make_hist_kde(filtered_popval, x=col, bins=bins, hue=None)
+    make_hist_kde(filtered_popval, x=col, bins=bins, hue=None, replacements=replacements)
 
 #Grouped by Occupancy Type
 print('\n---\nGrouped by Occupancy Type\n---\n')
 for col in filtered_popval.iloc[:, np.r_[0,6:12]].columns:
     print(f'\n{col}\n')
-    make_hist_kde(filtered_popval, x=col, bins=bins, hue='occupancy_type')
+    make_hist_kde(filtered_popval, x=col, bins=bins, hue='occupancy_type', replacements=replacements)
 
 # print('\nProperty Value')
 # make_hist_kde(filtered_popval, x='property_value', bins=bins)
@@ -1112,32 +1159,68 @@ for col in filtered_popval.iloc[:, np.r_[0,6:12]].columns:
 
 print('\nViewing Scatterplots with LR Line of Property Value Against Community Factors...\n')
 
-# make_scatter(filtered_popval, x='tract_population', y='property_value')
-# make_scatter(filtered_popval, x='tract_minority_population_percent', y='property_value')
-# make_scatter(filtered_popval, x='ffiec_msa_md_median_family_income', y='property_value')
-# make_scatter(filtered_popval, x='tract_to_msa_income_percentage', y='property_value')
-# make_scatter(filtered_popval, x='tract_owner_occupied_units', y='property_value')
-# make_scatter(filtered_popval, x='tract_one_to_four_family_homes', y='property_value')
-# make_scatter(filtered_popval, x='tract_median_age_of_housing_units', y='property_value')
+# make_scatter(filtered_popval, x='tract_population', y='property_value',
+#              xlab="Population", ylab="Property value", title="\n")
+# make_scatter(filtered_popval, x='tract_minority_population_percent', y='property_value',
+#              xlab="Pop Minority %", ylab="Property value", title="Scatterplots of Property Value Against Community Factors\n")
+# make_scatter(filtered_popval, x='ffiec_msa_md_median_family_income', y='property_value',
+#              xlab="Reg Median Income (MFI)", ylab="Property value", title="\n")
+# make_scatter(filtered_popval, x='tract_to_msa_income_percentage', y='property_value',
+#              xlab="Community % of MFI", ylab="Property value", title="\n")
+# make_scatter(filtered_popval, x='tract_owner_occupied_units', y='property_value',
+#              xlab="Num Owner Occupied", ylab="Property value", title=None)
+# make_scatter(filtered_popval, x='tract_one_to_four_family_homes', y='property_value',
+#              xlab="Num Family Homes", ylab="Property value", title=None)
+# make_scatter(filtered_popval, x='tract_median_age_of_housing_units', y='property_value',
+#              xlab="Median Home Age", ylab="Property value", title=None)
+
+# var_names1=["Population", "Pop Minority %", "Community % of MFI"]
+# var_names2=["Num Owner Occupied", "Num Family Homes", "Median Home Age"]
+
 
 #Pair Grid of Scatterplots
 x_vars1=["tract_population", "tract_minority_population_percent", "tract_to_msa_income_percentage"]
 x_vars2=["tract_owner_occupied_units", "tract_one_to_four_family_homes", "tract_median_age_of_housing_units"]
 
+#plt.figure(facecolor="white")
 g1 = sns.PairGrid(filtered_popval, y_vars=["property_value"], x_vars=x_vars1, height=5)
+g1.fig.suptitle("Scatterplots of Property Value Against Community Factors", y=1.08)
 g1.map(sns.regplot, color="#b3b3b3", scatter_kws={'alpha':0.03}, line_kws={"color":"#e5c494"})
 plt.ticklabel_format(style='plain')
 g2 = sns.PairGrid(filtered_popval, y_vars=["property_value"], x_vars=x_vars2, height=5)
 g2.map(sns.regplot, color="#b3b3b3", scatter_kws={'alpha':0.03}, line_kws={"color":"#e5c494"})
+
 plt.ticklabel_format(style='plain')
 plt.show()
 
 #%%
 #Additional variable comparison
+#resource: https://catherineh.github.io/programming/2016/05/24/seaborn-pairgrid-tips
 print('\nScatterplots of Correlated Community Factors Against One Another...\n')
-sns.pairplot(filtered_popval.iloc[:, np.r_[6,7,9:12]], plot_kws={'alpha': 0.1})
-plt.show()
 
+g=sns.pairplot(filtered_popval.iloc[:, np.r_[6,7,9:12]], plot_kws={'alpha': 0.1})
+#plt.figure(facecolor="white", edgecolor="white")
+#sns.set(rc={'axes.facecolor':'white', 'figure.facecolor':'white'})
+g.fig.suptitle("Scatterplots of Correlated Community Factors Against One Another", y=1.04)
+
+replacements = {'property_value':"Property Value",
+                'tract_population':"Population",
+                'tract_minority_population_percent':"Pop Minority %",
+                'tract_to_msa_income_percentage':"Community % of MFI",
+                'tract_owner_occupied_units':"Num Owner Occupied",
+                'tract_one_to_four_family_homes':"Num Family Homes",
+                'ffiec_msa_md_median_family_income':"Reg Median Income (MFI)"}
+
+for i in range(5):
+    for j in range(5):
+        xlabel = g.axes[i][j].get_xlabel()
+        ylabel = g.axes[i][j].get_ylabel()
+        if xlabel in replacements.keys():
+            g.axes[i][j].set_xlabel(replacements[xlabel])
+        if ylabel in replacements.keys():
+            g.axes[i][j].set_ylabel(replacements[ylabel])
+
+plt.show()
 ##################################################
 
 # print('\nFreq plots for cat vars...\n')
@@ -1159,12 +1242,21 @@ print('\nVIF Scores When Considering Different Community Factors')
 
 filtered_popval=propval_df[propval_cond].copy()
 
+replacements = {'property_value':"Property Value",
+                'tract_population':"Population",
+                'tract_minority_population_percent':"Pop Minority %",
+                'tract_to_msa_income_percentage':"Community % of MFI",
+                'tract_owner_occupied_units':"Num Owner Occupied",
+                'tract_one_to_four_family_homes':"Num Family Homes",
+                'tract_median_age_of_housing_units':"Median Home Age",
+                'ffiec_msa_md_median_family_income':"Reg Median Income (MFI)"}
+
 #Check for collinearity with VIF
-create_vif_table(filtered_popval, [6,7,9,10,11,12])
-create_vif_table(filtered_popval, [7,9,10,11,12])
-create_vif_table(filtered_popval, [7,9,10,11])
-create_vif_table(filtered_popval, [7,9,11])
-create_vif_table(filtered_popval, [7,9])
+create_vif_table(filtered_popval, [6,7,9,10,11,12], replacements=replacements)
+create_vif_table(filtered_popval, [7,9,10,11,12], replacements=replacements)
+create_vif_table(filtered_popval, [7,9,10,11], replacements=replacements)
+create_vif_table(filtered_popval, [7,9,11], replacements=replacements)
+create_vif_table(filtered_popval, [7,9], replacements=replacements)
 
 ##################################################
 
