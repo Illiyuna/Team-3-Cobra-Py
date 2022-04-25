@@ -313,7 +313,7 @@ combined_cond=((overcharged_df['interest_rate']>intr_low2) & (overcharged_df['in
 
 # Overcharged Subset
 
-print('\nDisplay Summary statistics for Overcharged DF...\n')
+print('\nDisplay Summary statistics for Overcharged Data Frame\n')
 
 overcharged_df=overcharged_df.dropna()
 overcharged_df.isnull().sum() / overcharged_df.shape[0] * 100
@@ -345,10 +345,11 @@ print(overcharged_df.groupby('derived_race').mean())
 
 # Black people and Hawaiians have highest IR, but Hawaiians receive the most discount points. 
 
+# On average, men have higher loan amounts than women.
+
 # Are finacial inst. charging higher IR despite discounts???
 ### What is the probability of getting a high cost loan based on your sex & race??
 ### Are men getting more or bigger loans than women? 
-### Blacks get more credits but still get higher IR? Hypocrisy of financial inst.
 
 
 #%%
@@ -357,7 +358,7 @@ print(overcharged_df.groupby('derived_race').mean())
 ## Graphical Exploration: Overcharged DF ##
 ###########################################
 
-print('\nGraphical Exploration: Overcharged DF...\n')
+print('\nGraphical Exploration: Overcharged Data Frame\n')
 
 #Top-level graphs
 print('\nOvercharged DF Top-level Graphs')
