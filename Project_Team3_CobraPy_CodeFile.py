@@ -686,7 +686,14 @@ plt.show()
 ####################################################### 
 
 overcharged_stats =overcharged_df.copy()
+## Anova Tests for Sex
+import scipy.stats as stats
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from scipy.stats import f_oneway
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
+#%%
 # One way Anova Total loan cost vs Sex
 
 # Total Loan Costs 
@@ -695,11 +702,9 @@ model_TLC= ols('total_loan_costs ~ C(derived_sex)',
 result_TLC = sm.stats.anova_lm(model_TLC, type=1)
   
 # Print the result
-print('\n Anova Results for Total Loan Cost by Sex')
 print(result_TLC)
 
 tukey_TLC = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['derived_sex'], alpha=0.05)
-print('\n Tukey Results for Total Loan Cost by Sex')
 print(tukey_TLC)
 
 # Females pay on average $1,832 LESS than "joint" borrowers.
@@ -712,10 +717,11 @@ print(tukey_TLC)
 #overcharged_stats.boxplot(column = 'total_loan_costs', by = 'derived_sex', color = [1:3])
 
 sns.boxplot(data = overcharged_stats, y = 'total_loan_costs', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
-plt.title('Boxplot. Total Loan Costs vs Derived Sex (w/o Outliers)', size=14)
-plt.xlabel('Sex', size=12)
-plt.ylabel('Total Loan Costs ($)',size=12)
-
+plt.title('Boxplot. Total Loan Costs vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Total Loan Costs ($)')
+plt.grid()
+plt.show()
 
 #%%
 # Interest Rates 
@@ -724,11 +730,9 @@ model_IR= ols('interest_rate ~ C(derived_sex)',
 result_IR = sm.stats.anova_lm(model_IR, type=1)
   
 # Print the result
-print('\n Anova Results for Interest Rate by Sex')
 print(result_IR)
 
 tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_sex'], alpha=0.05)
-print('\n Tukey Results for Interest Rate by Sex')
 print(tukey_IR)
 
 # Females pay 0.138 MORE points on their interest rate than joint borrowers.
@@ -738,10 +742,11 @@ print(tukey_IR)
 #%%
 #Boxplot interet rates vs derived sex
 sns.boxplot(data = overcharged_stats, y = 'interest_rate', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
-plt.title('Boxplot. Interest Rates vs Derived Sex (w/o Outliers)', size=14)
-plt.xlabel('Sex', size=12)
-plt.ylabel('Interest rates (%)', size=12)
-
+plt.title('Boxplot. Interest Rates vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Interest rates (%)')
+plt.grid()
+plt.show()
 
 #%%
 # Lender Credits
@@ -750,11 +755,9 @@ model_LC= ols('lender_credits ~ C(derived_sex)',
 result_LC = sm.stats.anova_lm(model_LC, type=1)
   
 # Print the result
-print('\n Anova Results for Lender Credits by Sex')
 print(result_LC)
 
 tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_sex'], alpha=0.05)
-print('\n Tukey Results for Lender Credits by Sex')
 print(tukey_LC)
 
 # All groups are statistically different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender. 
@@ -762,9 +765,11 @@ print(tukey_LC)
 #%%
 #Boxplot Lender credits vs derived sex
 sns.boxplot(data = overcharged_stats, y = 'lender_credits', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
-plt.title('Boxplot. Lender Credits vs Derived Sex (w/o Outliers)', size=14)
-plt.xlabel('Sex',size=12)
-plt.ylabel('Lender Credits ($)',size=12)
+plt.title('Boxplot. Lender Credits vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Lender Credits ($)')
+plt.grid()
+plt.show()
 
 #%%
 # Discount Points 
@@ -773,11 +778,9 @@ model_DP= ols('discount_points ~ C(derived_sex)',
 result_DP = sm.stats.anova_lm(model_DP, type=1)
   
 # Print the result
-print('\n Anova Results for Discount Points by Sex')
 print(result_DP)
 
 tukey_DP = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['derived_sex'], alpha=0.05)
-print('\n Tukey Results for Discount Points by Sex')
 print(tukey_DP)
 
 # All groups are statistically significantly different. This may be due finance perception, risk appetite and overall education, and not necesarily due to gender.
@@ -785,9 +788,11 @@ print(tukey_DP)
 #%%
 #Boxplot Discount Points vs derived sex
 sns.boxplot(data = overcharged_stats, y = 'discount_points', x = 'derived_sex', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
-plt.title('Boxplot. Discount Points vs Derived Sex (w/o Outliers)',size=14)
-plt.xlabel('Sex',size=12)
-plt.ylabel('Discount Points ($)',size=12)
+plt.title('Boxplot. Discount Points vs Derived Sex (w/o Outliers)')
+plt.xlabel('Sex')
+plt.ylabel('Discount Points ($)')
+plt.grid()
+plt.show()
 
 #%%
 # One way Anova for Race.
@@ -807,11 +812,14 @@ print(tukey_TLC)
 
 #%%
 #Boxplot Total Loan Costs vs Derived Race
-sns.boxplot(data = overcharged_stats, y = 'total_loan_costs', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+races = ['White', 'Black/\n AfrAms', 'Joint', 'Asian', 'Pacific \n isl.', '2 or + \n minorities', 'Native \n Am.']
+g1 = sns.boxplot(data = overcharged_stats, y = 'total_loan_costs', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+g1.set(xticklabels= races)
 plt.title('Boxplot. Total Loan Cost vs \n Derived Race (w/o Outliers)')
 plt.xlabel('Race')
-plt.xticks(rotation=90)
+plt.grid()
 plt.ylabel('Total Loan Costs ($)') 
+plt.show()
 
 #%%
 # Interest Rates vs Race
@@ -825,32 +833,47 @@ print(result_IR)
 tukey_IR = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_IR)
 
-# AfrAms pay, on average 22.2% MORE in Interest Rates than "joint" borrowers.
-# AfrAms. pay, on average, 19.2% MORE in interest rates than their white counterparts.
+# AfrAms pay, on average 0.222 MORE points in Interest Rates than "joint" borrowers.
+# AfrAms. pay, on average, 0.192 MORE points in interest rates than their white counterparts.
 
 #%%
 #Boxplot Interest rates vs Derived Race
-races = ['White', 'Black/\n AfrAms', 'Joint', 'Asian', 'Pacific \n isl.', '2 or + \n minorities', 'Native \n Am.']
+#races = ['White', 'Black/\n AfrAms', 'Joint', 'Asian', 'Pacific \n isl.', '2 or + \n minorities', 'Native \n Am.']
 g1 = sns.boxplot(data = overcharged_stats, y = 'interest_rate', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
 g1.set(xticklabels= races)
 g1.set(title ='Boxplot. Interest Rate vs Derived Race (w/o Outliers)')
 plt.xlabel('Race')
 plt.ylabel('Interest rate (%)') 
+plt.grid()
 plt.show()
+
 
 #%%
 # Lender Credits vs Race
+LC_wo_outliers = overcharged_stats['lender_credits'] < 3000
 model_LC= ols('lender_credits ~ C(derived_race)',
-            data=overcharged_stats).fit()
+            data=overcharged_stats.loc[LC_wo_outliers, :]).fit()
 result_LC = sm.stats.anova_lm(model_LC, type=1)
   
 # Print the result
 print(result_LC)
 
-tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats['lender_credits'], groups=overcharged_stats['derived_race'], alpha=0.05)
+tukey_LC = pairwise_tukeyhsd(endog=overcharged_stats.loc[LC_wo_outliers,'lender_credits'], groups=overcharged_stats.loc[LC_wo_outliers, 'derived_race'], alpha=0.05)
 print(tukey_LC)
 
 #  No statistical significance found among the Race groups for lender credits.
+
+#%%
+#Boxplot Lender Credits vs Derived Race
+#races = ['White', 'Black/\n AfrAms', 'Joint', 'Asian', 'Pacific \n isl.', '2 or + \n minorities', 'Native \n Am.']
+# NOTE: when removing outliers (LCC_wo_outliers), we still don't find any statistical significance on the Tukey test, even as we can observe differences in the plotted means of the boxplots.
+g1 = sns.boxplot(data = overcharged_stats.loc[LC_wo_outliers, :], y = 'lender_credits', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+g1.set(xticklabels= races)
+g1.set(title ='Boxplot. Lender Credit vs Derived Race (w/o Outliers)')
+plt.xlabel('Race')
+plt.ylabel('Lender Credit ($)') 
+plt.grid()
+plt.show()
 
 #%%
 # Discount Points vs Race
@@ -864,7 +887,18 @@ print(result_DP)
 tukey_DP = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['derived_race'], alpha=0.05)
 print(tukey_DP)
 
-# #  No statistical significance found among the Race groups for discount points.
+# No statistical significance found amon the Race groups for discount points.
+
+#%%
+#Boxplot Discount Points vs Derived Race
+#races = ['White', 'Black/\n AfrAms', 'Joint', 'Asian', 'Pacific \n isl.', '2 or + \n minorities', 'Native \n Am.']
+g1 = sns.boxplot(data = overcharged_stats, y = 'discount_points', x = 'derived_race', palette='Set3', showmeans = True, meanprops = {"marker": "o", "markerfacecolor":"red", "markeredgecolor":"black", "markersize":"6"}, showfliers = False)
+g1.set(xticklabels= races)
+g1.set(title ='Boxplot. Discount Points vs Derived Race (w/o Outliers)')
+plt.xlabel('Race')
+plt.ylabel('Discount Points ($)') 
+plt.grid()
+plt.show()
  
 #%%
 ### TWO-WAY ANOVAs
@@ -881,8 +915,8 @@ overcharged_stats['combination'] = overcharged_stats.derived_sex + overcharged_s
 tukey_TLC2 = pairwise_tukeyhsd(endog=overcharged_stats['total_loan_costs'], groups=overcharged_stats['combination'] , alpha=0.05)
 
 print(tukey_TLC2)
-# Asian females, when taking a loan, pay on average $3,653 MORE than White "joint" borrowers.
-# White females, when taking a loan, pay on average $3,653 MORE than White "joint" borrowers.
+# Asian females, when taking a loan, pay on average $3,653 LESS than White "joint" borrowers.
+# White females, when taking a loan, pay on average $3,653 LESS than White "joint" borrowers.
 # No other statsitically significant difference was found in the interactions.
 
 
@@ -895,15 +929,15 @@ result = sm.stats.anova_lm(model, type=2)
   
 print(result)
 
-#overcharged_stats['combination'] = overcharged_stats.derived_sex + overcharged_stats.derived_race
+overcharged_stats['combination'] = overcharged_stats.derived_sex + overcharged_stats.derived_race
 
 tukey_IR2 = pairwise_tukeyhsd(endog=overcharged_stats['interest_rate'], groups=overcharged_stats['combination'] , alpha=0.05)
 
 print(tukey_IR2)
 
-# Female AfrAms pay on average 0.263 LESS on their interest rates than their White "joint" counterparts.
-# Female AfrAms pay on average 0.221 LESS on their interest rates than their Male "joint" counterparts.
-# White "joint" pay on average 0.185 MORE than their interest rates than their Male AfrAms counterparts.
+# Female AfrAms pay on average 0.263 MORE points on their interest rates than their White "joint" counterparts.
+# Female AfrAms pay on average 0.221 MORE points on their interest rates than their Male "joint" counterparts.
+# White "joint" pay on average 0.185 LESS than their interest rates than their Male AfrAms counterparts.
  
 
 #%%
@@ -934,9 +968,9 @@ print(result)
 tukey_DP2 = pairwise_tukeyhsd(endog=overcharged_stats['discount_points'], groups=overcharged_stats['combination'] , alpha=0.05)
 
 print(tukey_DP2)
-# Asian females agree on average to an additional $2,264 on Discount points than their White "joint" counterparts.
-# AfrAm females agree on average to an additional $1,267 on Discount points than their White "joint" counterparts.
-# White females agree on average to an additional $1,214 on Discount points than their White "joint" counterparts.
+# White "joint" borrowers agree on average to an additional $2,264 on Discount points than their Asian females counterparts.
+# White "joint" borrowers agree on average to an additional $1,267 on Discount points than their AfrAm females  counterparts.
+# White "joint" borrowers agree on average to an additional $1,214 on Discount points than their White Female counterparts.
 
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
