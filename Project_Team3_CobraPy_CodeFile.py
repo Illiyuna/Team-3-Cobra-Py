@@ -563,48 +563,6 @@ plt.show()
 
 
 #%%
-#################
-
-# CAN WE DELETE VIOLIN PLOTS 
-
-####################
-
-#violin plots for comparisons
-print('\nViolin Plots Comparing Effects of Sex and Race on Total Loan Costs and Interest Rate...\n')
-
-#sex total loan cost
-print('\nDistribution of Total Loan Costs by Sex')
-sns.violinplot(x="derived_sex",
-             y="total_loan_costs",
-             #hue="derived_race",
-             data = overcharged_df[loan_cond])
-plt.show()
-
-#race total loan cost
-print('\nDistribution of Total Loan Costs by Race')
-sns.violinplot(x="derived_race",
-             y="total_loan_costs",
-             #hue="derived_race",
-             data = overcharged_df[loan_cond])
-plt.xticks(rotation=45, size='small')
-plt.show()
-
-#sex interest rate
-print('\nDistribution of Interest Rates by Sex')
-sns.violinplot(x="derived_sex",
-             y="interest_rate",
-             #hue="derived_race",
-             data = overcharged_df[loan_cond])
-plt.show()
-
-#race interest rate
-print('\nDistribution of Interest Rates by Race')
-sns.violinplot(x="derived_race",
-             y="interest_rate",
-             #hue="derived_race",
-             data = overcharged_df[loan_cond])
-plt.xticks(rotation=45, size='small')
-plt.show()
 
 #%%
 # Correlation Matrix for Overcharged 
@@ -773,7 +731,7 @@ plt.ylabel('Interest rates (%)')
 plt.grid()
 plt.show()
 
-#%%
+#%% 
 # Lender Credits
 model_LC= ols('lender_credits ~ C(derived_sex)',
             data=overcharged_stats).fit()
@@ -1352,59 +1310,5 @@ print(model_test_fit.summary())
 ##################################################
 #<<<<<<<<<<<<<<<< End of Section >>>>>>>>>>>>>>>>#
 
-#%%
-
-######################
-## CODE CEMETARY :( ##
-######################
-
-######################################
-## Graphical Exploration: Inital DF ##
-######################################
-
-# print('\nGraphical Exploration: Initial DF...\n')
-
-    #*******************************#
-##### INSERT Illiyuna's graphs here #####
-    #*******************************#
-
-#A grouped bar chart with the average loan value by loan 
-# type. Label the averages for each bar on the chart.
-
-# Used construction method as a proxy from property type 
-# Loan Type
-# 1 -- Conventional (not insured or guaranteed by FHA VA RHS or FSA)
-# 2 -- Federal Housing Administration insured (FHA)
-# 3 -- Veterans Affairs guranteed (VA)
-# 4 -- USDA Rural Housing Service or Farm Service Agency guaranteed (RHS or FSA)
-
-# sns.barplot(data=init_df, 
-#             x='loan_type', 
-#             y='loan_amount', 
-#             hue='construction_method', ci=None)
-# plt.xlabel('Type of Loan',size=14)
-# plt.ylabel('Average Loan Amount',size=14)
-# plt.title('Average Loan Amount & Type by Property Type') 
-# x_var= ['Conventional', 
-#         'FHA Insured', 
-#         'VA Insured',
-#         'RHS or FSA Insured']
-# plt.xticks([0,1,2,3], x_var, rotation=20)
-# labels= ['Site Built', 'Manufactured Home']         
-# plt.legend(labels,loc='upper left')
-# plt.show()
-
-
-#Graph Groupings of preapproval with action taken
-#Need tables Illiyuna made for this to run
-# data=pd.DataFrame(grouped.size()).reset_index()
-# sns.barplot(data=data[data['preapproval']==1], x='action_taken', y=0)
-# plt.title('Distribution of Actions Taken for Applicants who Were not Preapproved')
-# plt.show()
-# sns.barplot(data=data[data['preapproval']==2], x='action_taken', y=0)
-# plt.title('Distribution of Actions Taken for Preapproved Applicants')
-# plt.show()
-
-##################################################
 
 # %%
